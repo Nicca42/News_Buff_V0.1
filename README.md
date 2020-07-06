@@ -1,7 +1,7 @@
 <div align="center">
     <h1>
         News Buff V0.1
-    </h1>
+    </h1> 
     <h5>
         News Buff is a censorship-resistant news platform.
     </h5>
