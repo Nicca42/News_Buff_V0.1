@@ -6,7 +6,7 @@ import * as actions from "./actions";
 import * as mutations from "./mutation-types";
 
 // Importing helper tools
-// import { getNetIdString } from "@/utils/HelperTools";
+import { getNetIdString } from "@/utils/HelperTools";
 
 // Importing contract ABIs
 
@@ -61,11 +61,13 @@ export default new Vuex.Store({
   },
   actions: {
     [actions.SET_UP_INFO]: async function({commit}, ethers) {
-      let network = await ethers.getNetwork();
+      let network = await getNetIdString(ethers);
       let signer = await ethers.getSigner();
       let address = await signer.getAddress();
+
+      console.log(network)
       // Committing to state
-      commit(mutations.SET_CURRENT_NETWORK, network.chainId);
+      commit(mutations.SET_CURRENT_NETWORK, network);
       commit(mutations.SET_SIGNER, signer);
       commit(mutations.SET_USER_ADDRESS, address);
       window.ethereum.enable();

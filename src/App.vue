@@ -4,7 +4,7 @@
       <b-navbar toggleable="lg" type="light" varient="info">
         <router-link to="/">Home</router-link> |
         <router-link to="/about">About</router-link>
-        <h5>Network: {{ currentNetwork }} | Address: {{ userAddress }}</h5> 
+        <h5>Network: {{ currentNetwork }} <br> Address: {{ userAddress }}</h5> 
         <b-navbar-nav class="ml-auto">
         </b-navbar-nav>
       </b-navbar>
