@@ -71,7 +71,7 @@ export default new Vuex.Store({
     },
     [mutations.SET_LIME_FACTORY](state, instance) {
       state.limeFactory = instance;
-      console.log("dai address set to: ");
+      console.log("contract instance set to: ");
       console.log(state.limeFactory);
     }
   },
@@ -81,7 +81,6 @@ export default new Vuex.Store({
       let signer = await provider.getSigner();
       let address = await signer.getAddress();
 
-      console.log(network)
       // Committing to state
       commit(mutations.SET_PROVIDER, provider);
       commit(mutations.SET_CURRENT_NETWORK, network);
@@ -90,15 +89,39 @@ export default new Vuex.Store({
       window.ethereum.enable();
 
       let limeFactory = new state.ethers.Contract(
-        "0x2bD9aAa2953F988153c8629926D22A6a5F69b14E",
+        "0x9eD274314f0fB37837346C425D3cF28d89ca9599",
         LimeFactoryABI.abi,
-        provider
+        state.signer
       );
       commit(mutations.SET_LIME_FACTORY, limeFactory);
     },
     [actions.SET_ETHERS]: function({commit}, ethers) {
       commit(mutations.SET_ETHERS, ethers);
-    }
+    },
+    [actions.INTERACT_CONTRACT]: async function({commit, state}, params) {
+      console.log(params);
+      let tx = await state.limeFactory.createLime(
+        params.name,
+        params.carbs,
+        params.fat,
+        params.protein,
+      );
+      console.log("done")
+
+      let topic = state.ethers.utils.id("FreshLime(uint8)");
+      let blockNumber = await state.provider.getBlockNumber();
+
+      let filter = {
+        address: "0x9eD274314f0fB37837346C425D3cF28d89ca9599",
+        fromBlock: blockNumber - 100,
+        toBlock: blockNumber,
+        topics: [ topic ]
+      };
+
+      let results = await state.provider.getLogs(filter);
+      // The emitted event data will be under [index].data
+      console.log(results);
+    },
   },
   modules: {
   }

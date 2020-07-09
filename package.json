@@ -5,7 +5,9 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "con-build": "etherlime compile"
+    "con-build": "etherlime compile",
+    "con-start": "etherlime ganache",
+    "con-deploy": "etherlime deploy"
   },
   "dependencies": {
     "core-js": "^3.6.5",

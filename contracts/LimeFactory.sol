@@ -2,7 +2,7 @@ pragma solidity ^0.6.0;
 
 contract LimeFactory {
 
-    event FreshLime(string name);
+    event FreshLime(uint8 carbs);
 
     struct Lime {
         string name;
@@ -16,6 +16,6 @@ contract LimeFactory {
     function createLime(string memory _name, uint8 _carbohydrates, uint8 _fat, uint8 _protein) public {
         require(_carbohydrates != 0, "The carbohydrates cannot be 0");
         limes.push(Lime(_name, _carbohydrates, _fat, _protein));
-        emit FreshLime(_name);
+        emit FreshLime(_carbohydrates);
     }
 }
