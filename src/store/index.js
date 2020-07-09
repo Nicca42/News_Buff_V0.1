@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import ethers from 'ethers';
 
 // Importing constants
 import * as actions from "./actions";
@@ -20,7 +19,7 @@ Vue.component('b-navbar-nav', BNavbarNav);
 // Setting Vue up to use Vuex
 Vue.use(Vuex)
 
-// The state of the application
+// The global state of the application
 export default new Vuex.Store({
   state: {
     connected: false,
@@ -33,8 +32,11 @@ export default new Vuex.Store({
     userDaiBalance: null,
     limeFactory: null
   },
+  /**
+     * mutations can only edit one state at a time. If multiple state changes
+     * are done in the same mutation only the first one will execute.
+     */
   mutations: {
-    // ethers/blockchain stuff
     [mutations.SET_SIGNER](state, signer) {
       console.log("signer set to: ");
       state.signer = signer;
@@ -75,6 +77,10 @@ export default new Vuex.Store({
       console.log(state.limeFactory);
     }
   },
+  /**
+   * Actions can only take in one parameter. If multiple need to be sent they
+   * need to be formatted into an object and sent through as one object
+   */
   actions: {
     [actions.SET_UP_INFO]: async function({commit, state}, provider) {
       let network = await getNetIdString(provider);
@@ -91,8 +97,14 @@ export default new Vuex.Store({
       let limeFactory = new state.ethers.Contract(
         "0x9eD274314f0fB37837346C425D3cF28d89ca9599",
         LimeFactoryABI.abi,
-        state.signer
+        state.signer 
       );
+      /**
+       * By passing in the signer to the contract instead of the provider, the
+       * contract will be set up in context of the user, meaning you will not
+       * have to add the users address to each transaction, as they are set
+       * as the provider so it will be coming from them in all txs.
+       */
       commit(mutations.SET_LIME_FACTORY, limeFactory);
     },
     [actions.SET_ETHERS]: function({commit}, ethers) {
@@ -100,6 +112,11 @@ export default new Vuex.Store({
     },
     [actions.INTERACT_CONTRACT]: async function({commit, state}, params) {
       console.log(params);
+      /**
+       * actions can only take in one parameter. This is an example of an
+       * action that needed to take in multiple. See LandingPage.vue for the
+       * calling/set up of the parameters
+       */
       let tx = await state.limeFactory.createLime(
         params.name,
         params.carbs,
@@ -108,6 +125,10 @@ export default new Vuex.Store({
       );
       console.log("done")
 
+      /**
+       * This is a very janky way to get the events and it gives them to you
+       * encoded. I am sure there is a better way to do this but for now its fine
+       */
       let topic = state.ethers.utils.id("FreshLime(uint8)");
       let blockNumber = await state.provider.getBlockNumber();
 
@@ -122,7 +143,5 @@ export default new Vuex.Store({
       // The emitted event data will be under [index].data
       console.log(results);
     },
-  },
-  modules: {
   }
 });

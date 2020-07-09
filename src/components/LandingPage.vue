@@ -37,6 +37,9 @@ export default {
   	},
 	methods: {
 		...mapActions(["INTERACT_CONTRACT"]),
+		/** 
+		  * This is an example of passing in the parameters as one object
+		  */
 		interact() {
 			let params = {
 				name: this.name, 
