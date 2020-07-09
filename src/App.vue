@@ -25,6 +25,7 @@ export default {
   data() {
     return {
       ethers: null,
+      provider: null,
       signer: null
     }
   },
@@ -33,9 +34,11 @@ export default {
   },
   async mounted() {
     if(window.ethereum) {
-      this.ethers = new ethers.providers.Web3Provider(window.ethereum)
+      this.provider = new ethers.providers.Web3Provider(window.ethereum);
+      this.ethers = ethers;
+      console.log(ethers)
       this.SET_ETHERS(this.ethers);
-      this.SET_UP_INFO(this.ethers);
+      this.SET_UP_INFO(this.provider);
     }
   },
   computed: {
