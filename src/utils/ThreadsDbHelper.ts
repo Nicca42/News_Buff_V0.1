@@ -65,7 +65,7 @@ class ThreadsDbHelper {
         this.threadID = ThreadID.fromRandom();
     }
 
-    init = async (id:string, keyKey:string, keySecret: string, keyType: number): Promise<ThreadsDbHelper> => {
+    init = async (id:string, keyKey:string, keySecret: string, keyType: number): Promise<Array<any>> => {
         // An `id` is parsed in as a param
         // Making an id string to either recover or create a new ID
         let identityString:string;
@@ -100,7 +100,10 @@ class ThreadsDbHelper {
         // Creates a database with the key info and thread ID
         this.db = await Database.withKeyInfo(keyInfo, this.threadID.toString());
         // Returns the class
-        return this;
+        return [
+            identityString,
+            this.identity
+        ];
     }
 
     storeContent = async () => {
@@ -117,7 +120,7 @@ class ThreadsDbHelper {
         return JSON.stringify(info)
     }
 
-    createContent = async () => {
+    createDb = async () => {
         // Checks there is an ID
         if (!this.identity) {
             throw new Error('Identity not found')
@@ -151,6 +154,16 @@ class ThreadsDbHelper {
         }
         this.storeContent()
     }
+
+    send = async (content: ContentInstance) => {
+        if (!this.content) {
+            throw new Error('DB not ready')
+        }
+        await this.content.insert(content)
+        if (!this.db || !this.db.threadID) {
+            throw new Error('DB not ready')
+        }
+      }
 
     loadContent = async () => {
         if (!this.identity) {

@@ -8,6 +8,29 @@
   </div>
 </template>
 
+<script>
+  import { mapActions, mapState } from "vuex";
+
+  export default {
+    data() {
+      return {
+        ethers: null,
+        provider: null,
+        signer: null
+      }
+    },
+    methods: {
+      ...mapActions([
+        "SET_UP"
+      ])
+    },
+    async mounted() {
+      this.SET_UP();
+    }
+  }
+
+</script>
+
 <style lang="scss">
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
