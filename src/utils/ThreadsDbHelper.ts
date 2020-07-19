@@ -155,7 +155,21 @@ class ThreadsDbHelper {
         this.storeContent()
     }
 
-    send = async (content: ContentInstance) => {
+    createContent = async (
+            _id: string,
+            contentAuthor: string,
+            contentTitle: string,
+            contentDescription: string,
+            contentBody: string
+    ) => {
+        let content:ContentInstance = {
+            _id,
+            contentAuthor,
+            contentTitle,
+            contentDescription,
+            contentBody
+        };
+
         if (!this.content) {
             throw new Error('DB not ready')
         }
