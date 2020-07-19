@@ -1,9 +1,8 @@
 export const ContentSchema = {
-    $id: 'https://example.com/content.schema.json',
     $schema: "http://json-schema.org/draft-07/schema#",
     title: "Content",
     description: "All the information required for a content object",
-    required: [ "contentTitle", "contentDescription", "contentBody" ],
+    required: [ "_id", "contentTitle", "contentDescription", "contentBody" ],
     type: "object",
     properties: {
         _id: {
@@ -35,5 +34,11 @@ export interface ContentInstance {
     contentTitle: string,
     contentDescription: string,
     contentBody: string
+}
+
+export interface ContentState {
+    contents: ContentInstance[],
+    threadID?: string,
+    invite?: string
 }
 

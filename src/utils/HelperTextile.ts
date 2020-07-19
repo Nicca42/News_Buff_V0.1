@@ -2,7 +2,7 @@ import { DBInfo } from "@textile/threads-client";
 import {Libp2pCryptoIdentity} from '@textile/threads-core';
 import { JSONSchema, Database, Collection } from "@textile/threads-database";
 import { ThreadID, KeyInfo, Client } from '@textile/hub';
-import { ContentSchema, ContentInstance } from './helpers';
+import { ContentSchema, ContentInstance, ContentState } from './helpers';
 
 class ThreadsDbHelper {
     public threadID: ThreadID;
@@ -54,6 +54,20 @@ class ThreadsDbHelper {
         return this;
     }
 
+    storeContent = async () => {
+        const content = this.threadID.toString();
+        console.log("Should be storing content: ");
+        console.log(content);
+    }
+
+    public getInfoString = async () => {
+        if (!this.db) {
+            throw new Error('No db')
+        }
+        const info = await this.db.getDBInfo(true)
+        return JSON.stringify(info)
+    }
+
     createContent = async () => {
         // Checks there is an ID
         if (!this.identity) {
@@ -67,14 +81,10 @@ class ThreadsDbHelper {
         await this.db.start(this.identity, {threadID: this.threadID});
     
         await this.createCollection();
-        // this.storeCurrentRoom()
+        this.storeContent()
         return this.threadID;
     }
-
-    loadContent = async () => {
-
-    }
-
+    
     createCollection = async () => {
         if (!this.db) {
             throw new Error('No db')
@@ -84,13 +94,28 @@ class ThreadsDbHelper {
             // Chat exists, so just use it as the reference
             this.content = collections.get('basic-content')
         } else {
-            // Chat doesn't exist, create it
+        // Chat doesn't exist, create it
             this.content = await this.db.newCollection<ContentInstance>(
                 'basic-content',
                 ContentSchema
             );
         }
-        // this.storeCurrentRoom()
+        this.storeContent()
+    }
+
+    loadContent = async () => {
+        if (!this.identity) {
+            throw new Error('Identity not found')
+        }
+        if (!this.db) {
+            throw new Error('Database not setup')
+        }
+        
+        await this.db.start(this.identity, {threadID: this.threadID});
+        // await this.db.start(this.identity)
+        await this.createCollection();
+        this.threadID = this.db.threadID || this.threadID;
+        return this.db.threadID;
     }
 }
 
