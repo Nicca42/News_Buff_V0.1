@@ -18,7 +18,6 @@
 		<input type="text" v-model="content" name="content" /><br /><br />
 		
 		<button @click="interact">Submit</button>
-		{{name}}
   </div>
 </template>
 
@@ -26,7 +25,6 @@
 import { mapActions, mapState } from "vuex";
 
 export default {
-  name: "HelloWorld",
   data() {
     return {
       title: null,
@@ -38,6 +36,7 @@ export default {
   methods: {
     ...mapActions(["CREATE_CONTENT"]),
     interact() {
+      console.log(">>>\nHere 6");
 			let params = {
 				title: this.title, 
 				description: this.description,

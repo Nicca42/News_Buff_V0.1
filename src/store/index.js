@@ -45,9 +45,17 @@ export default new Vuex.Store({
 			
 			commit(mutations.SET_USER_ID, helper[0]);
 			commit(mutations.SET_USER_LIBP2P_ID, helper[1]);
+			console.log(">>>\nHere 5");
 		},
-		[actions.CREATE_CONTENT]: async function({ commit, state }, info) {
-      
+		[actions.CREATE_CONTENT]: async function({ commit, state }, params) {
+			console.log(">>>\nHere 6");
+      await bucketHelper.createContent(
+				'1',
+				params.author,
+				params.title,
+				params.description,
+				params.content
+			);
       console.log("creating");
     },
   },
