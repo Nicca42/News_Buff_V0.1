@@ -2,7 +2,56 @@ import { DBInfo } from "@textile/threads-client";
 import {Libp2pCryptoIdentity} from '@textile/threads-core';
 import { JSONSchema, Database, Collection } from "@textile/threads-database";
 import { ThreadID, KeyInfo, Client } from '@textile/hub';
-import { ContentSchema, ContentInstance, ContentState } from './helpers';
+// import { ContentSchema, ContentInstance } from './textile_helper';
+
+interface ContentInstance {
+    _id: string,
+    contentAuthor: string,
+    contentTitle: string,
+    contentDescription: string,
+    contentBody: string
+}
+
+interface ContentState {
+    contents: ContentInstance[],
+    threadID?: string,
+    invite?: string
+}
+
+/**
+ * Schema taken from https://json-schema.org/learn/miscellaneous-examples.html
+ * Additional info https://json-schema.org/learn/getting-started-step-by-step.html
+*/
+
+let ContentSchema: {
+    $schema: "http://json-schema.org/draft-07/schema#",
+    title: "Content",
+    description: "All the information required for a content object",
+    required: [ "_id", "contentTitle", "contentDescription", "contentBody" ],
+    type: "object",
+    properties: {
+        _id: {
+            type: 'string',
+            description: "The instance's id.",
+        },
+        contentAuthor: {
+            type: "string",
+            description: "The author of the content"
+        },
+        contentTitle: {
+            type: "string",
+            description: "The title for the content"
+        },
+        contentDescription: {
+            type: "string",
+            description: "A description for the content"
+        },
+        contentBody: {
+            type: "string",
+            description: "The body of the content. Either mark down or HTML"
+        }
+    }
+};
 
 class ThreadsDbHelper {
     public threadID: ThreadID;
@@ -112,7 +161,7 @@ class ThreadsDbHelper {
         }
         
         await this.db.start(this.identity, {threadID: this.threadID});
-        // await this.db.start(this.identity)
+        await this.db.start(this.identity)
         await this.createCollection();
         this.threadID = this.db.threadID || this.threadID;
         return this.db.threadID;

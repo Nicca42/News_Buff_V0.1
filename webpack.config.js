@@ -10,6 +10,10 @@ module.exports = (env) => ({
     },
     devtool: env === 'production' ? false : 'source-map',
     module: {
+        loaders: [
+            // All files with a '.ts' or '.tsx' extension will be handled by 'awesome-typescript-loader'.
+            { test: /\.tsx?$/, loader: "awesome-typescript-loader" }
+        ],
         rules: [
             { enforce: 'pre', test: /\.js$/, loader: 'source-map-loader' },
             {
@@ -25,8 +29,9 @@ module.exports = (env) => ({
     },
     resolve: {
         // we also need to add *.tsx here
-        extensions: ['.js', '.jsx', '.ts', '.tsx'],
+        extensions: ['.js', '.jsx', '.ts', '.tsx', '*.ts', '*.tsx'],
     },
     plugins: [
         new HtmlWebPackPlugin({ template: './src/index.html' }),
     ],
+});
