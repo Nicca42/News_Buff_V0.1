@@ -12,8 +12,8 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     keyInfo: {
-      key: process.env.HUB_KEY,
-      secret: "",
+      key: process.env.VUE_APP_HUB_KEY,
+      secret: process.env.VUE_APP_HUB_KEY_SECRET,
       // @ts-ignore
       type: 1,
 		},

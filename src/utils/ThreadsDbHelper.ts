@@ -67,6 +67,8 @@ class ThreadsDbHelper {
 
     init = async (id:string, keyKey:string, keySecret: string, keyType: number): Promise<Array<any>> => {
         // Constructs the key from the parsed in key info
+        console.log(keyKey);
+        console.log(keySecret);
         this.keyInfo = {
             key: keyKey,
             secret: keySecret,
@@ -75,8 +77,8 @@ class ThreadsDbHelper {
         };
         
         // Setting up the client
-        // this.client = await Client.withKeyInfo(this.keyInfo);
-        // console.log("Wtf")
+        this.client = await Client.withKeyInfo(this.keyInfo);
+        console.log("Wtf")
         
         // An `id` is parsed in as a param
         // Making an id string to either recover or create a new ID
@@ -105,15 +107,15 @@ class ThreadsDbHelper {
             }
         }
         // setting up clients token
-        // let clientToken = await this.client.getToken(this.identity);
-        // console.log(">>>\nClient token: ");
-        // console.log(clientToken);
+        let clientToken = await this.client.getToken(this.identity);
+        console.log(">>>\nClient token: ");
+        console.log(clientToken);
 
         // Creates a database with the key info and thread ID
         this.db = await Database.withKeyInfo(
             this.keyInfo, 
-            "threads.demo"
-            // this.threadID.toString(),
+            // "threads.demo"
+            this.threadID.toString(),
             // undefined,
             // process.env.HUB_KEY
         );
