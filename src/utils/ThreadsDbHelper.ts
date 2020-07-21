@@ -107,27 +107,18 @@ class ThreadsDbHelper {
             }
         }
         // setting up clients token
-        let clientToken = await this.client.getToken(this.identity);
+        let clientToken = await this.client.getToken(
+            this.identity
+        );
         this.clientToken = clientToken;
-
-        // // Creates a database with the key info and thread ID
-        // this.db = await Database.withKeyInfo(
-        //     this.keyInfo, 
-        //     // "threads.demo"
-        //     this.threadID.toString(),
-        //     // undefined,
-        //     // process.env.HUB_KEY
-        // );
-        // // starts the db
-        // await this.db.start(
-        //     this.idIdentity, 
-        //     {threadID: this.threadID}
-        // );
-        // await this.createCollection();
 
         await this.client.newDB(this.threadID);
 
-        await this.client.newCollection(this.threadID, 'basic-content', ContentSchema);
+        await this.client.newCollection(
+            this.threadID, 
+            'basic-content', 
+            ContentSchema
+        );
 
         console.log("Init complete")
 
@@ -152,24 +143,6 @@ class ThreadsDbHelper {
         const info = await this.db.getDBInfo(true)
         return JSON.stringify(info)
     }
-    
-    createCollection = async () => {
-        if (!this.db) {
-            throw new Error('No db')
-        }
-        const {collections} = this.db
-        if (collections.get('basic-content')) {
-            // Content exists, so just use it as the reference
-            this.collection = collections.get('basic-content')
-        } else {
-            // Content doesn't exist, create it
-            this.collection = await this.db.newCollection<ContentInstance>(
-                'basic-content',
-                ContentSchema
-            );
-        }
-        // this.storeContent()
-    }
 
     createContent = async (
             _id: string,
@@ -187,63 +160,27 @@ class ThreadsDbHelper {
             contentBody
         };
 
-        // if (!this.collection) {
-        //     throw new Error('Content not defined')
-        // }
-        // if (!this.db || !this.db.threadID) {
-        //     throw new Error('DB not ready')
-        // }
-
         console.log(">>>HERE 2");
 
-        const ids = await this.client.create(this.threadID, 'basic-content', [content]);
+        const ids = await this.client.create(
+            this.threadID, 
+            'basic-content', 
+            [content]
+        );
 
-        // const BasicContent = await this.db.collections.get('basic-content');
-        // console.log(">>>HERE 3");
-        // if (!BasicContent) throw new Error('Collection does not exist');
-        // console.log(">>>HERE 4");
-        // const newContent = await new BasicContent(content);
-        // console.log(">>>HERE 5");
-        // await newContent.save();
-        // console.log(">>>HERE 6");
-        // await BasicContent.save(newContent);
         console.log("inserting")
-
-        // this.emitter(this.db);
       }
 
     loadContent = async (): Promise<any> => {
         if (!this.identity) {
             throw new Error('Identity not found')
         }
-        // if (!this.db) {
-        //     throw new Error('Database not setup')
-        // }
 
-        // const BasicContent = await this.db.collections.get('basic-content');
-
-        // if (!BasicContent) throw new Error('Collection does not exist');
-        
-        // const query = {
-        //     contentAuthor: "params.author"
-        // };
-
-        // const all = BasicContent.find(query);
-
-        // console.log(all);
-
-        // let content:any[] = [];
-
-        // const asyncIterator = all[Symbol.asyncIterator]();
-        // let result = await asyncIterator.next();
-        // console.log(await asyncIterator.next());
-        // console.log(await asyncIterator.next());
-        // // for await (const x of all) {
-        // //     content.push(x.value);
-        // //     console.log(x.value)
-        // // }
-
-        let content = await this.client.find(this.threadID, 'basic-content', {});
+        let content = await this.client.find(
+            this.threadID, 
+            'basic-content', 
+            {}
+        );
 
         return content;
     }
