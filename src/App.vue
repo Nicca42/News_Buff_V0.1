@@ -25,7 +25,6 @@
       ])
     },
     async mounted() {
-      console.log(">>>\nhere 1")
       this.SET_UP();
     }
   }

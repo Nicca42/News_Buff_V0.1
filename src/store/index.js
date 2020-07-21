@@ -18,9 +18,12 @@ export default new Vuex.Store({
       type: 1,
 		},
 		threadInfo: {
+			threadId: null,
 			userId: null,
 			userLibp2pId: null
-		}
+		},
+		contentIdCounter: 1,
+		loadedContent: null
   },
   mutations: {
 		[mutations.SET_USER_ID](state, identity) {
@@ -32,6 +35,11 @@ export default new Vuex.Store({
       console.log("identity (libp2p) set to: ");
       state.threadInfo.userLibp2pId = libp2pId;
       console.log(state.threadInfo.userLibp2pId);
+		},
+		[mutations.SET_LOADED_CONTENT](state, loadedContent) {
+      console.log("loaded content set to: ");
+      state.loadedContent = loadedContent;
+      console.log(state.loadedContent);
     },
 	},
   actions: {
@@ -43,21 +51,30 @@ export default new Vuex.Store({
         state.keyInfo.type
       );
 			
-			commit(mutations.SET_USER_ID, helper[0]);
-			commit(mutations.SET_USER_LIBP2P_ID, helper[1]);
-			console.log(">>>\nHere 5");
+			// commit(mutations.SET_USER_ID, helper[0]);
+			commit(mutations.SET_USER_ID, helper[1]);
+			commit(mutations.SET_USER_LIBP2P_ID, helper[2]);
 		},
 		[actions.CREATE_CONTENT]: async function({ commit, state }, params) {
-			console.log(">>>\nHere 6");
+			console.log("in action")
       await bucketHelper.createContent(
-				'1',
+				state.contentIdCounter.toString(),
 				params.author,
 				params.title,
 				params.description,
 				params.content
 			);
-      console.log("creating");
-    },
+			
+			state.contentIdCounter += 1;
+			console.log("\nFinished creating content");
+		},
+		[actions.LOAD_CONTENT]: async function({ commit, state }) {
+			console.log("\nLoading...\n")
+			let content = await bucketHelper.loadContent();
+
+			commit(mutations.SET_LOADED_CONTENT, content);
+			console.log(content);
+		},
   },
   modules: {},
 });

@@ -17,7 +17,9 @@
 		<label for="lname">Content: </label>
 		<input type="text" v-model="content" name="content" /><br /><br />
 		
-		<button @click="interact">Submit</button>
+		<button @click="interact">Submit</button><br /><br />
+		<button @click="load">Load</button><br /><br />
+    {{ loadedContent }}
   </div>
 </template>
 
@@ -34,9 +36,9 @@ export default {
     }
   },
   methods: {
-    ...mapActions(["CREATE_CONTENT"]),
+    ...mapActions(["CREATE_CONTENT", "LOAD_CONTENT"]),
     interact() {
-      console.log(">>>\nHere 6");
+      console.log("Creating content");
 			let params = {
 				title: this.title, 
 				description: this.description,
@@ -44,7 +46,13 @@ export default {
 				content: this.content
 			}
 			this.CREATE_CONTENT(params);
-		}
+		},
+    load() {
+      this.LOAD_CONTENT();
+    }
+  },
+  computed: {
+    ...mapState(["loadedContent"])
   }
 };
 </script>
