@@ -64,7 +64,7 @@ export default new Vuex.Store({
 				params.description,
 				params.content
 			);
-			
+
 			state.contentIdCounter += 1;
 			console.log("\nFinished creating content");
 		},
@@ -73,6 +73,13 @@ export default new Vuex.Store({
 			let content = await bucketHelper.loadContent();
 
 			commit(mutations.SET_LOADED_CONTENT, content);
+			console.log(content);
+		},
+		[actions.LOAD_AUTHORS_CONTENT]: async function({ commit, state }, author) {
+			console.log("\nLoading...\n")
+			let content = await bucketHelper.loadAuthorsContent(author);
+
+			// commit(mutations.SET_LOADED_CONTENT, content);
 			console.log(content);
 		},
   },

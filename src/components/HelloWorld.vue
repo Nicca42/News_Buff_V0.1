@@ -20,6 +20,8 @@
 		<button @click="interact">Submit</button><br /><br />
 		<button @click="load">Load</button><br /><br />
     {{ loadedContent }}
+    <input type="text" v-model="searchAuth" name="searchAuth" /><br /><br />
+    <button @click="search">Search Author</button><br /><br />
   </div>
 </template>
 
@@ -32,11 +34,12 @@ export default {
       title: null,
       description: null,
       author: null,
-      content: null
+      content: null,
+      searchAuth: null
     }
   },
   methods: {
-    ...mapActions(["CREATE_CONTENT", "LOAD_CONTENT"]),
+    ...mapActions(["CREATE_CONTENT", "LOAD_CONTENT", "LOAD_AUTHORS_CONTENT"]),
     interact() {
       console.log("Creating content");
 			let params = {
@@ -49,6 +52,9 @@ export default {
 		},
     load() {
       this.LOAD_CONTENT();
+    },
+    search() {
+      this.LOAD_AUTHORS_CONTENT(this.searchAuth);
     }
   },
   computed: {

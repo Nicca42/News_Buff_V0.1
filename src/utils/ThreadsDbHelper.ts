@@ -1,7 +1,7 @@
-import { DBInfo } from "@textile/threads-client";
+import { DBInfo, Where } from "@textile/threads-client";
 import {Libp2pCryptoIdentity} from '@textile/threads-core';
 import { JSONSchema, Database, Collection } from "@textile/threads-database";
-import { ThreadID, KeyInfo, Client, UserAuth, Identity } from '@textile/hub';
+import { ThreadID, KeyInfo, Client, UserAuth, createUserAuth, Identity } from '@textile/hub';
 import { fromEvent } from 'rxjs';
 
 interface ContentInstance {
@@ -56,7 +56,7 @@ class ThreadsDbHelper {
     public threadID: ThreadID;
     private client: Client;
     private clientToken: string;
-    private auth: UserAuth;
+    private clientAuth: UserAuth;
     private keyInfo: KeyInfo;
     private db?: Database;
     private identity?: Libp2pCryptoIdentity;
@@ -79,6 +79,18 @@ class ThreadsDbHelper {
         
         // Setting up the client
         this.client = await Client.withKeyInfo(this.keyInfo);
+
+        const expiration = new Date(Date.now() + 100 * 1000)
+
+        this.clientAuth = await createUserAuth(
+            this.keyInfo.key,
+            this.keyInfo.secret ?? '',
+            expiration
+        );
+
+        Client.withUserAuth(
+            this.clientAuth
+        );
         
         // An `id` is parsed in as a param
         // Making an id string to either recover or create a new ID
@@ -151,6 +163,16 @@ class ThreadsDbHelper {
             contentDescription: string,
             contentBody: string
     ) => {
+        if (!this.identity) {
+            throw new Error('Identity not defined')
+        }
+        // resetting expiring key (i think)
+        this.client = await Client.withKeyInfo(this.keyInfo);
+        // setting a new token
+        let clientToken = await this.client.getToken(
+            this.identity
+        );
+
         console.log(">>>HERE 1");
         let content:ContentInstance = {
             _id,
@@ -180,6 +202,22 @@ class ThreadsDbHelper {
             this.threadID, 
             'basic-content', 
             {}
+        );
+
+        return content;
+    }
+
+    loadAuthorsContent = async (author:string): Promise<any> => {
+        if (!this.identity) {
+            throw new Error('Identity not found')
+        }
+
+        let query = new Where('contentAuthor').eq(author);
+
+        let content = await this.client.find(
+            this.threadID, 
+            'basic-content', 
+            query
         );
 
         return content;
