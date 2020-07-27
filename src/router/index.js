@@ -1,30 +1,96 @@
 import Vue from "vue";
-import VueRouter from "vue-router";
-import Home from "../views/Home.vue";
+import Router from "vue-router";
 
-Vue.use(VueRouter);
+//pages
+import Home from "@/views/Home.vue";
+import UserProfile from "@/views/UserProfile.vue";
+import CreateProfile from "@/views/CreateProfile.vue";
+import ViewPost from "@/views/ViewPost.vue";
+import BrowsePosts from "@/views/BrowsePosts.vue";
+import ListPost from "@/views/ListPost.vue";
+import ManagePosts from "@/views/ManagePosts.vue";
+import TermsOfService from "@/views/TermsOfService.vue";
+import ContactUs from "@/views/ContactUs.vue";
 
-const routes = [
-  {
-    path: "/",
-    name: "Home",
-    component: Home
-  },
-  {
-    path: "/about",
-    name: "About",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/About.vue")
-  }
-];
+Vue.use(Router);
 
-const router = new VueRouter({
+const router = new Router({
   mode: "history",
-  base: process.env.BASE_URL,
-  routes
+  // base: process.env.BASE_URL,
+  routes: [
+    {
+      path: "/",
+      name: "News Buff - Home",
+      component: Home,
+      meta: {
+        accountNeeded: false,
+      },
+    },
+    {
+      path: "/Profile",
+      name: "News Buff - Profile",
+      component: UserProfile,
+      meta: {
+        accountNeeded: true,
+      },
+    },
+    {
+      path: "/CreateProfile",
+      name: "News Buff - Create Profile",
+      component: CreateProfile,
+      meta: {
+        accountNeeded: false,
+      },
+    },
+    {
+      path: "/BrowsePosts",
+      name: "News Buff - Browse Posts",
+      component: BrowsePosts,
+      meta: {
+        accountNeeded: false,
+      },
+    },
+    {
+      path: "/ListPost",
+      name: "News Buff - List new Post",
+      component: ListPost,
+      meta: {
+        accountNeeded: true,
+      },
+    },
+    {
+      path: "/ManagePosts",
+      name: "News Buff - Manage Posts",
+      component: ManagePosts,
+      meta: {
+        accountNeeded: true,
+      },
+    },
+    {
+      path: "/TermsOfService",
+      name: "News Buff - Terms of Use",
+      component: TermsOfService,
+      meta: {
+        accountNeeded: false,
+      },
+    },
+    {
+      path: "/ContactUs",
+      name: "News Buff - Contact Us",
+      component: ContactUs,
+      meta: {
+        accountNeeded: false,
+      },
+    },
+    {
+      path: "/post/:id",
+      name: "News Buff - Post",
+      component: ViewPost,
+      meta: {
+        accountNeeded: false,
+      },
+    },
+  ],
 });
 
 export default router;
