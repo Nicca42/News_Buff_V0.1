@@ -3896,7 +3896,7 @@ cipher-base@^1.0.0, cipher-base@^1.0.1, cipher-base@^1.0.3:
     inherits "^2.0.1"
     safe-buffer "^5.0.1"
 
-circom@LimeChain/circom:
+"circom@github:LimeChain/circom":
   version "0.0.24"
   resolved "https://codeload.github.com/LimeChain/circom/tar.gz/4ae2447b97d558820a7c7817d602185478ad0b92"
   dependencies:
@@ -3931,7 +3931,7 @@ clean-stack@^2.0.0:
   resolved "https://registry.yarnpkg.com/clean-stack/-/clean-stack-2.2.0.tgz#ee8472dbb129e727b31e8a10a427dee9dfe4008b"
   integrity sha512-4diC9HaTE+KRAMWhDhrGOECgWZxoevMc5TlkObMqNSsVU62PYzXZ/SMTjzyGAFF1YusgxGcSWTEXBhp0CPwQ1A==
 
-cli-analytics-sdk@LimeChain/cli-analytics-sdk:
+"cli-analytics-sdk@github:LimeChain/cli-analytics-sdk":
   version "1.0.0"
   resolved "https://codeload.github.com/LimeChain/cli-analytics-sdk/tar.gz/a6889825b171d1a146936b13287357c93b5535b9"
   dependencies:
@@ -5683,7 +5683,7 @@ etherlime-utils@^1.1.4:
   dependencies:
     chalk "2.4.1"
 
-etherlime@2.3.3:
+etherlime@^2.3.3:
   version "2.3.3"
   resolved "https://registry.yarnpkg.com/etherlime/-/etherlime-2.3.3.tgz#c26e4ef9ae5e4c00cc1dfe1dfdc92551a7902265"
   integrity sha512-9fOTOj1BIiFIuxqFlvOvlHHYYvQfXFDMgkGsx/JTcieS1uR20t4xPBg2gCkyTxW0kdrtRVPsKmmKDhFPlPTc0Q==
@@ -11601,7 +11601,7 @@ snapdragon@^0.8.1:
     source-map-resolve "^0.5.0"
     use "^3.1.0"
 
-snarkjs@LimeChain/snarkjs:
+"snarkjs@github:LimeChain/snarkjs":
   version "0.1.11"
   resolved "https://codeload.github.com/LimeChain/snarkjs/tar.gz/f7036ebe9bfa3f3817077f050780c8ec1542e249"
   dependencies:

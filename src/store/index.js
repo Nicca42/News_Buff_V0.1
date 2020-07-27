@@ -16,17 +16,17 @@ export default new Vuex.Store({
       secret: process.env.VUE_APP_HUB_KEY_SECRET,
       // @ts-ignore
       type: 1,
-		},
-		threadInfo: {
-			threadId: null,
-			userId: null,
-			userLibp2pId: null
-		},
-		contentIdCounter: 1,
-		loadedContent: null
+    },
+    threadInfo: {
+      threadId: null,
+      userId: null,
+      userLibp2pId: null,
+    },
+    contentIdCounter: 1,
+    loadedContent: null,
   },
   mutations: {
-		[mutations.SET_USER_ID](state, identity) {
+    [mutations.SET_USER_ID](state, identity) {
       console.log("identity set to: ");
       state.threadInfo.userId = identity;
       console.log(state.threadInfo.userId);
@@ -35,13 +35,13 @@ export default new Vuex.Store({
       console.log("identity (libp2p) set to: ");
       state.threadInfo.userLibp2pId = libp2pId;
       console.log(state.threadInfo.userLibp2pId);
-		},
-		[mutations.SET_LOADED_CONTENT](state, loadedContent) {
+    },
+    [mutations.SET_LOADED_CONTENT](state, loadedContent) {
       console.log("loaded content set to: ");
       state.loadedContent = loadedContent;
       console.log(state.loadedContent);
     },
-	},
+  },
   actions: {
     [actions.SET_UP]: async function({ commit, state }, provider) {
       let helper = await bucketHelper.init(
@@ -50,38 +50,48 @@ export default new Vuex.Store({
         state.keyInfo.secret,
         state.keyInfo.type
       );
-			
-			// commit(mutations.SET_USER_ID, helper[0]);
-			commit(mutations.SET_USER_ID, helper[1]);
-			commit(mutations.SET_USER_LIBP2P_ID, helper[2]);
-		},
-		[actions.CREATE_CONTENT]: async function({ commit, state }, params) {
-			console.log("in action")
+
+      // commit(mutations.SET_USER_ID, helper[0]);
+      commit(mutations.SET_USER_ID, helper[1]);
+      commit(mutations.SET_USER_LIBP2P_ID, helper[2]);
+    },
+    [actions.CREATE_CONTENT]: async function({ commit, state }, params) {
+      console.log("in action");
       await bucketHelper.createContent(
-				state.contentIdCounter.toString(),
-				params.author,
-				params.title,
-				params.description,
-				params.content
-			);
+        state.contentIdCounter.toString(),
+        params.author,
+        params.title,
+        params.description,
+        params.content
+      );
 
-			state.contentIdCounter += 1;
-			console.log("\nFinished creating content");
-		},
-		[actions.LOAD_CONTENT]: async function({ commit, state }) {
-			console.log("\nLoading...\n")
-			let content = await bucketHelper.loadContent();
+      state.contentIdCounter += 1;
+      console.log("\nFinished creating content");
+    },
+    [actions.LOAD_CONTENT]: async function({ commit, state }) {
+      console.log("\nLoading...\n");
+      let content = await bucketHelper.loadContent();
 
-			commit(mutations.SET_LOADED_CONTENT, content);
-			console.log(content);
-		},
-		[actions.LOAD_AUTHORS_CONTENT]: async function({ commit, state }, author) {
-			console.log("\nLoading...\n")
-			let content = await bucketHelper.loadAuthorsContent(author);
+      commit(mutations.SET_LOADED_CONTENT, content);
+      console.log(content);
+    },
+    [actions.LOAD_AUTHORS_CONTENT]: async function({ commit, state }, author) {
+      console.log("\nLoading...\n");
+      let content = await bucketHelper.loadAuthorsContent(author);
 
-			// commit(mutations.SET_LOADED_CONTENT, content);
-			console.log(content);
-		},
+      // commit(mutations.SET_LOADED_CONTENT, content);
+      console.log(content);
+    },
+    [actions.CREATE_POST]: async function({ commit, dispatch, state }, params) {
+      console.log("IN list post call");
+      console.log(params);
+    },
+    [actions.GET_ALL_POSTS]: async function(
+      { commit, dispatch, state },
+      params
+    ) {
+      console.log("IN get all posts");
+    },
   },
   modules: {},
 });
