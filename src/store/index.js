@@ -68,14 +68,73 @@ export default new Vuex.Store({
       state.threadInfo.userLibp2pId = libp2pId;
       console.log(state.threadInfo.userLibp2pId);
     },
+    [mutations.SET_CURRENT_NETWORK](state, network) {
+      console.log("network set to: ");
+      state.currentNetwork = network;
+      console.log(state.currentNetwork);
+    },
     [mutations.SET_LOADED_CONTENT](state, loadedContent) {
       console.log("loaded content set to: ");
       state.loadedContent = loadedContent;
       console.log(state.loadedContent);
+		},
+		[mutations.SET_SIGNER](state, signer) {
+      console.log("signer set to: ");
+      state.signer = signer;
+      console.log(state.signer);
     },
+    [mutations.SET_USER_ADDRESS](state, address) {
+      state.userAddress = address;
+      console.log("user address set to:")
+      console.log(state.userAddress)
+    },
+    [mutations.SET_CURRENT_NETWORK](state, network) {
+      state.currentNetwork = network;
+      console.log("network set to: " + state.currentNetwork);
+    },
+    [mutations.SET_ETHERS](state, ethers) {
+      state.ethers = ethers;
+      console.log("ethers set to: ");
+      console.log(state.ethers);
+    },
+    [mutations.SET_PROVIDER](state, provider) {
+      state.provider = provider;
+      console.log("provider set to: ");
+      console.log(state.provider);
+    },
+    [mutations.SET_USER_DAI_BALANCE](state, balance) {
+      state.userDaiBalance = balance;
+      console.log("user dai balance set to: ");
+      console.log(state.userDaiBalance);
+    },
+    [mutations.SET_DAI_ADDRESS](state, address) {
+      state.daiAddress = address;
+      console.log("dai address set to: ");
+      console.log(state.daiAddress);
+    },
+    [mutations.SET_LIME_FACTORY](state, instance) {
+      state.limeFactory = instance;
+      console.log("contract instance set to: ");
+      console.log(state.limeFactory);
+    }
   },
   actions: {
+		[actions.SET_ETHERS]: function({commit}, ethers) {
+      commit(mutations.SET_ETHERS, ethers);
+    },
     [actions.SET_UP]: async function({ commit, state }, provider) {
+			commit(mutations.SET_PROVIDER, provider);
+			// Converts the network ID into human readable label
+			let network = await getNetIdString(provider);
+			commit(mutations.SET_CURRENT_NETWORK, network);
+			// Gets the signer from the provider
+			let signer = await provider.getSigner();
+			commit(mutations.SET_SIGNER, signer);
+			// Requests the address to connect to from the user
+      await state.provider.send("eth_requestAccounts", []);
+      const address = await state.signer.getAddress();
+			commit(mutations.SET_USER_ADDRESS, address);
+			// Sets up the needed IDs for Textile interactions
       let helper = await bucketHelper.init(
         "",
         state.keyInfo.key,
@@ -85,7 +144,9 @@ export default new Vuex.Store({
 
       // commit(mutations.SET_USER_ID, helper[0]);
       commit(mutations.SET_USER_ID, helper[1]);
-      commit(mutations.SET_USER_LIBP2P_ID, helper[2]);
+			commit(mutations.SET_USER_LIBP2P_ID, helper[2]);
+			
+      window.ethereum.enable();
     },
     [actions.CREATE_CONTENT]: async function({ commit, state }, params) {
       console.log("in action");

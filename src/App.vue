@@ -148,13 +148,19 @@ export default {
     };
   },
   methods: {
-    ...mapActions(["SET_UP"]),
+    ...mapActions(["SET_UP", "SET_ETHERS"]),
     // redirect(_path) {
     //   router.push({ name: _path });
     // },
   },
   async mounted() {
-    this.SET_UP();
+    if(window.ethereum) {
+      this.ethers = ethers;
+      this.SET_ETHERS(this.ethers);
+
+      this.provider = new ethers.providers.Web3Provider(window.ethereum);
+      this.SET_UP(this.provider);
+    }
   },
   computed: {
     ...mapState(["currentNetwork", "account", "userProfile"]),
