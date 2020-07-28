@@ -171,13 +171,20 @@ export default new Vuex.Store({
     [actions.LOAD_AUTHORS_CONTENT]: async function({ commit, state }, author) {
       console.log("\nLoading...\n");
       let content = await bucketHelper.loadAuthorsContent(author);
-
+			console.log(content);
       // commit(mutations.SET_LOADED_CONTENT, content);
-      console.log(content);
+      // console.log(content);
     },
     [actions.CREATE_POST]: async function({ commit, dispatch, state }, params) {
       console.log("IN list post call");
-      console.log(params);
+			
+			await bucketHelper.createContent(
+        state.contentIdCounter.toString(),
+        state.userAddress,
+        params.title,
+        params.description,
+        params.body
+      );
     },
     [actions.GET_ALL_POSTS]: async function(
       { commit, dispatch, state },

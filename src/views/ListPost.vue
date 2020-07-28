@@ -43,7 +43,22 @@
                   >Invalid title</span
                 >
               </md-field>
-
+              <md-field :class="getInputValidationClass('description')">
+                <label for="description">Description</label>
+                <md-input
+                  name="description"
+                  id="description"
+                  autocomplete="given-name"
+                  v-model="inputForm.description"
+                />
+                <span class="md-error" v-if="!$v.inputForm.description.required"
+                  >The description is required</span
+                >
+                <span class="md-error" v-else-if="!$v.inputForm.description.minlength"
+                  >Invalid description</span
+                >
+              </md-field>
+              <label for="body">Body</label>
               <tinymce
                 id="d1"
                 :other_options="tinyOptions"
@@ -108,6 +123,7 @@ export default {
     newUser: false,
     inputForm: {
       title: "",
+      description: "",
       tags: [],
       body:
         '<h2 style="color: #8390C2;">Hi there from NewsBuff!</h2> <p>&nbsp;</p> <p><span>You can use this space to design and describe your news post 👯‍♂️</span></p>',
@@ -122,6 +138,11 @@ export default {
       title: {
         required,
         minLength: minLength(3),
+      },
+      description: {
+        required,
+        minLength: minLength(3),
+        maxLength: maxLength(350),
       },
     },
   },
