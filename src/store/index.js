@@ -3,9 +3,10 @@ import Vuex from "vuex";
 // Importing constants
 import * as actions from "./actions";
 import * as mutations from "./mutation-types";
-// Importing constance
+// Importing helper tools
 import { ThreadsDbHelper } from "!awesome-typescript-loader!../utils/ThreadsDbHelper.ts";
 const bucketHelper = new ThreadsDbHelper();
+import { getNetIdString } from "@/utils/ToolsHelper";
 
 Vue.use(Vuex);
 
@@ -23,10 +24,10 @@ export default new Vuex.Store({
       userLibp2pId: null,
     },
     contentIdCounter: 1,
-	loadedContent: null,
-	account: "0xF30a2B73A8450ECC39539c61C8b96C09eb032E20",
+    loadedContent: null,
+    account: "0xF30a2B73A8450ECC39539c61C8b96C09eb032E20",
     userProfile: { firstName: "John", lastName: "snow" },
-    currentNetwork: "Mainnet",
+    currentNetwork: null,
     posts: [
       {
         id: 0,

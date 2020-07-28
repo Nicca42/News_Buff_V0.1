@@ -10,7 +10,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "start": "etherlime init"
+    "start": "etherlime ganache -q --networkId=1337 --gasLimit=9000000"
   },
   "dependencies": {
     "@babel/preset-typescript": "^7.10.4",

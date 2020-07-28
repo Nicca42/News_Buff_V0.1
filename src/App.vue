@@ -13,6 +13,9 @@
           class="md-layout md-gutter md-alignment-center-right"
           style="text-align:right; width:500px"
         >
+          <span class="md-caption" style="float: right;">
+            {{ currentNetwork }}
+          </span>
           <div class="md-layout-item">
             <div class="md-subheading">
               {{ userProfile.firstName }} {{ userProfile.lastName }}
@@ -117,9 +120,6 @@
           >
           📰
         </span>
-        <span class="md-caption" style="float: right;">
-          {{ currentNetwork }}
-        </span>
       </div>
     </md-app-content>
   </md-app>
@@ -133,6 +133,8 @@ import * as actions from "@/store/actions";
 import * as mutations from "@/store/mutation-types";
 import { mapActions, mapState } from "vuex";
 import router from "@/router";
+
+import ethers from "ethers";
 
 export default {
   name: "app",
