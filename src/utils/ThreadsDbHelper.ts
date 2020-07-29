@@ -173,7 +173,6 @@ class ThreadsDbHelper {
             this.identity
         );
 
-        console.log(">>>HERE 1");
         let content:ContentInstance = {
             _id,
             contentAuthor,
@@ -182,16 +181,13 @@ class ThreadsDbHelper {
             contentBody
         };
 
-        console.log(">>>HERE 2");
-
         const ids = await this.client.create(
             this.threadID, 
             'basic-content', 
             [content]
         );
-
-        console.log("inserting")
-      }
+        console.log("> Successfully added post");
+    }
 
     loadContent = async (): Promise<any> => {
         if (!this.identity) {
@@ -219,6 +215,28 @@ class ThreadsDbHelper {
         );
         
         let query = new Where('contentAuthor').eq(author);
+
+        let content = await this.client.find(
+            this.threadID, 
+            'basic-content', 
+            query
+        );
+
+        return content;
+    }
+
+    loadContentById = async (id:number): Promise<any> => {
+        if (!this.identity) {
+            throw new Error('Identity not defined')
+        }
+        // resetting expiring key (i think)
+        this.client = await Client.withKeyInfo(this.keyInfo);
+        // setting a new token
+        let clientToken = await this.client.getToken(
+            this.identity
+        );
+        
+        let query = new Where('_id').eq(id);
 
         let content = await this.client.find(
             this.threadID, 

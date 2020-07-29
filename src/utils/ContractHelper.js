@@ -15,7 +15,7 @@ const getTokenAddress = async (_ethers) => {
         case 42: // Kovan
             return '';
         case 1337: // Local
-            return '0x1a5726c1A0f4c89AE3892E544d7D3F385dE11513';
+            return '0x958bB2307a498A61b0AdEAe3c5f9426270979774';
         default:
             console.error("Invalid network");
             return '';
@@ -38,7 +38,8 @@ const getUserToken = async (_uniqueUserTokenInstance, _userAddress) => {
     return({
         userName: userTokenInfo[0],
         threadId: userTokenInfo[1],
-        created: userTokenInfo[2]
+        created: userTokenInfo[2],
+        contentIds: userTokenInfo[3]
     });
 };
 
@@ -56,9 +57,18 @@ const createUserToken = async (_uniqueUserTokenInstance, _userName, _userThreadI
     return(userTokenTx);
 };
 
+const addContent = async (_uniqueUserTokenInstance, _contentId) => {
+    await _uniqueUserTokenInstance.createContent(
+        _contentId
+    );
+
+    console.log("> Successfully added post to token");
+};
+
 module.exports = {
     getTokenAddress,
     getContractInstance,
     getUserToken,
-    createUserToken
+    createUserToken,
+    addContent
 };

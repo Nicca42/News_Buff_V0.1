@@ -7,7 +7,7 @@ import * as mutations from "./mutation-types";
 import { ThreadsDbHelper } from "!awesome-typescript-loader!../utils/ThreadsDbHelper.ts";
 const bucketHelper = new ThreadsDbHelper();
 import { getNetIdString } from "@/utils/ToolsHelper";
-import { getTokenAddress, getContractInstance, getUserToken, createUserToken } from "@/utils/ContractHelper";
+import * as ContractHelper from "@/utils/ContractHelper";
 import UniqueUserTokensABI from "../../build/UniqueUserTokens.json";
 
 Vue.use(Vuex);
@@ -91,7 +91,7 @@ export default new Vuex.Store({
 		},
     [mutations.ADD_AUTHOR_POST](state, authorPost) {
       console.log("Author post added: ");
-      state.authorsPosts.push(authorPost);
+      state.authorsPosts = authorPost;
       console.log(state.authorsPosts);
 		},
 		[mutations.SET_SIGNER](state, signer) {
@@ -158,10 +158,10 @@ export default new Vuex.Store({
       commit(mutations.SET_USER_ADDRESS, address);
       
       // Setting up contract info
-      let tokenAddress = await getTokenAddress(state.provider);
+      let tokenAddress = await ContractHelper.getTokenAddress(state.provider);
       commit(mutations.SET_CONTRACT_ADDRESS, tokenAddress);
       // Getting the contract instance
-      let tokenContractInstance = await getContractInstance(
+      let tokenContractInstance = await ContractHelper.getContractInstance(
         state.provider,
         state.ethers,
         state.signer,
@@ -173,37 +173,61 @@ export default new Vuex.Store({
        * user has, as well as their user name. If then do not have a token,
        * the user will be prompted to make one TODO
        */
-      let userToken = await getUserToken(
+      let userToken = await ContractHelper.getUserToken(
         state.tokenInfo.tokenContractInstance,
         state.userAddress
       );
 
       if(!userToken.created) {
+        console.log("User has no existing thread ID\nCreating Thread ID...");
         let helper = await bucketHelper.init(
           "",
           state.keyInfo.key,
           state.keyInfo.secret,
           state.keyInfo.type
         );
+        console.log("> Token created for user");
         commit(mutations.SET_USER_ID, helper[1]);
         commit(mutations.SET_USER_LIBP2P_ID, helper[2]);
-        
-        let results = await createUserToken(
+        console.log("User has no existing token\nCreating token...");
+        // A token is created for the user
+        let results = await ContractHelper.createUserToken(
           state.tokenInfo.tokenContractInstance,
           "User Name",
           helper[1]
         );
-
-        console.log("User token created");
+        console.log("> Token created for user");
       } else {
+        console.log("User has existing Thread ID\nLoading Thread ID...");
         let helper = await bucketHelper.init(
           userToken.threadId,
           state.keyInfo.key,
           state.keyInfo.secret,
           state.keyInfo.type
         );
+        console.log("> Thread ID loaded");
         commit(mutations.SET_USER_ID, helper[1]);
         commit(mutations.SET_USER_LIBP2P_ID, helper[2]);
+
+        // Getting the user pre-existing content and adding it to the state
+        if(userToken.contentIds.length > 0) {
+          console.log("User has pre-existing content\nLoading content...");
+          userToken.contentIds.forEach(async function (contentId) {
+            let post = await bucketHelper.loadContentById(contentId);
+            let formatPost = {
+              id: post._id,
+              title: post.contentTitle,
+              authorName: "Blank for now",
+              publisher: post.contentAuthor,
+              abstract: post.contentDescription,
+              body: post.contentBody,
+              image: null,
+              tags: [],
+            };
+            commit(mutations.ADD_AUTHOR_POST, formatPost);
+          });
+          console.log("> Content loaded");
+        }
       }
 
       console.log(userToken);
@@ -244,7 +268,7 @@ export default new Vuex.Store({
       // console.log(content);
     },
     [actions.CREATE_POST]: async function({ commit, dispatch, state }, params) {
-      console.log("IN list post call");
+      console.log("Creating post...");
 			
 			await bucketHelper.createContent(
         state.contentIdCounter.toString(),
@@ -252,13 +276,22 @@ export default new Vuex.Store({
         params.title,
         params.description,
         params.body
-			);
-			console.log("\n>>>\tSucessfully added post");
+      );
+      console.log("Adding post to token...");
+      
+      await ContractHelper.addContent(
+        state.tokenInfo.tokenContractInstance,
+        state.contentIdCounter.toString()
+      );
+
+      state.contentIdCounter += 1;
     },
     [actions.GET_ALL_AUTHOR_POSTS]: async function({ commit, dispatch, state }) {
       let posts = await bucketHelper.loadAuthorsContent(state.userAddress);
 			console.log(posts.instancesList);
-			console.log(posts.instancesList[0]);
+      console.log(posts.instancesList[0]);
+      
+      let authorsPosts = [];
 
 			posts.instancesList.forEach(
 				function (post) {
@@ -271,10 +304,10 @@ export default new Vuex.Store({
 						body: post.contentBody,
 						image: null,
 						tags: [],
-					};
-					commit(mutations.ADD_AUTHOR_POST, formatPost);
-				}
-			);
+          };
+          authorsPosts.push(formatPost);
+				});
+        commit(mutations.ADD_AUTHOR_POST, authorsPosts);
     },
     [actions.GET_ALL_POSTS]: async function(
       { commit, dispatch, state },

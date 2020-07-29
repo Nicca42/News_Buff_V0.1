@@ -10,6 +10,7 @@ contract UniqueUserTokens is ERC721, ERC721Burnable {
         string userName;
         string threadId;
         bool created;
+        uint[] contentIds;
     }
 
     mapping(address => UserInfo) private _userInformation;
@@ -28,11 +29,25 @@ contract UniqueUserTokens is ERC721, ERC721Burnable {
         tokensCreated.add(1);
     }
 
-    function getUserTokenInfo(address _user) public view returns(string memory, string memory, bool) {
+    function getUserTokenInfo(address _user)
+        public
+        view
+        returns(
+            string memory,
+            string memory,
+            bool,
+            uint[] memory
+        )
+    {
         return (
             _userInformation[_user].userName,
             _userInformation[_user].threadId,
-            _userInformation[_user].created
+            _userInformation[_user].created,
+            _userInformation[_user].contentIds
         );
+    }
+
+    function createContent(uint _contentId) public {
+        _userInformation[msg.sender].contentIds.push(_contentId);
     }
 }
