@@ -208,26 +208,6 @@ export default new Vuex.Store({
         console.log("> Thread ID loaded");
         commit(mutations.SET_USER_ID, helper[1]);
         commit(mutations.SET_USER_LIBP2P_ID, helper[2]);
-
-        // Getting the user pre-existing content and adding it to the state
-        if(userToken.contentIds.length > 0) {
-          console.log("User has pre-existing content\nLoading content...");
-          userToken.contentIds.forEach(async function (contentId) {
-            let post = await bucketHelper.loadContentById(contentId);
-            let formatPost = {
-              id: post._id,
-              title: post.contentTitle,
-              authorName: "Blank for now",
-              publisher: post.contentAuthor,
-              abstract: post.contentDescription,
-              body: post.contentBody,
-              image: null,
-              tags: [],
-            };
-            commit(mutations.ADD_AUTHOR_POST, formatPost);
-          });
-          console.log("> Content loaded");
-        }
       }
 
       console.log(userToken);
