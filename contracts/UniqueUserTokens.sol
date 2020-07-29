@@ -27,4 +27,12 @@ contract UniqueUserTokens is ERC721, ERC721Burnable {
 
         tokensCreated.add(1);
     }
+
+    function getUserTokenInfo(address _user) public view returns(string memory, string memory, bool) {
+        return (
+            _userInformation[_user].userName,
+            _userInformation[_user].threadId,
+            _userInformation[_user].created
+        );
+    }
 }

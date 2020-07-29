@@ -7,6 +7,8 @@ import * as mutations from "./mutation-types";
 import { ThreadsDbHelper } from "!awesome-typescript-loader!../utils/ThreadsDbHelper.ts";
 const bucketHelper = new ThreadsDbHelper();
 import { getNetIdString } from "@/utils/ToolsHelper";
+import { getTokenAddress, getContractInstance, getUserToken, createUserToken } from "@/utils/ContractHelper";
+import UniqueUserTokensABI from "../../build/UniqueUserTokens.json";
 
 Vue.use(Vuex);
 
@@ -23,9 +25,17 @@ export default new Vuex.Store({
       userId: null,
       userLibp2pId: null,
     },
+    tokenInfo: {
+      tokenContractInstance: null,
+      tokenContractAddress: null
+    },
+    ethers: null,
+    provider: null,
+    signer: null,
     contentIdCounter: 1,
     loadedContent: null,
-    account: "0xF30a2B73A8450ECC39539c61C8b96C09eb032E20",
+    account: null,
+    userAddress: null,
     userProfile: { firstName: "John", lastName: "snow" },
     currentNetwork: null,
     posts: [
@@ -56,9 +66,7 @@ export default new Vuex.Store({
         tags: ["Moderated (x6)", "Verified sources", "Verified sources"],
       },
 		],
-		authorsPosts: [
-
-		],
+		authorsPosts: [],
   },
   mutations: {
     [mutations.SET_USER_ID](state, identity) {
@@ -120,10 +128,15 @@ export default new Vuex.Store({
       console.log("dai address set to: ");
       console.log(state.daiAddress);
     },
-    [mutations.SET_LIME_FACTORY](state, instance) {
-      state.limeFactory = instance;
+    [mutations.SET_CONTRACT_INSTANCE](state, instance) {
+      state.tokenInfo.tokenContractInstance = instance;
       console.log("contract instance set to: ");
-      console.log(state.limeFactory);
+      console.log(state.tokenInfo.tokenContractInstance);
+    },
+    [mutations.SET_CONTRACT_ADDRESS](state, address) {
+      state.tokenInfo.tokenContractAddress = address;
+      console.log("contract address set to: ");
+      console.log(state.tokenInfo.tokenContractAddress);
     }
   },
   actions: {
@@ -131,6 +144,7 @@ export default new Vuex.Store({
       commit(mutations.SET_ETHERS, ethers);
     },
     [actions.SET_UP]: async function({ commit, state }, provider) {
+      // Setting up Textile info
 			commit(mutations.SET_PROVIDER, provider);
 			// Converts the network ID into human readable label
 			let network = await getNetIdString(provider);
@@ -141,18 +155,64 @@ export default new Vuex.Store({
 			// Requests the address to connect to from the user
       await state.provider.send("eth_requestAccounts", []);
       const address = await state.signer.getAddress();
-			commit(mutations.SET_USER_ADDRESS, address);
-			// Sets up the needed IDs for Textile interactions
-      let helper = await bucketHelper.init(
-        "",
-        state.keyInfo.key,
-        state.keyInfo.secret,
-        state.keyInfo.type
+      commit(mutations.SET_USER_ADDRESS, address);
+      
+      // Setting up contract info
+      let tokenAddress = await getTokenAddress(state.provider);
+      commit(mutations.SET_CONTRACT_ADDRESS, tokenAddress);
+      // Getting the contract instance
+      let tokenContractInstance = await getContractInstance(
+        state.provider,
+        state.ethers,
+        state.signer,
+        UniqueUserTokensABI.abi
+      );
+      commit(mutations.SET_CONTRACT_INSTANCE, tokenContractInstance);
+      /**
+       * Getting the users token. This will get any pre-existing token that the
+       * user has, as well as their user name. If then do not have a token,
+       * the user will be prompted to make one TODO
+       */
+      let userToken = await getUserToken(
+        state.tokenInfo.tokenContractInstance,
+        state.userAddress
       );
 
+      if(!userToken.created) {
+        let helper = await bucketHelper.init(
+          "",
+          state.keyInfo.key,
+          state.keyInfo.secret,
+          state.keyInfo.type
+        );
+        commit(mutations.SET_USER_ID, helper[1]);
+        commit(mutations.SET_USER_LIBP2P_ID, helper[2]);
+        
+        let results = await createUserToken(
+          state.tokenInfo.tokenContractInstance,
+          "User Name",
+          helper[1]
+        );
+
+        console.log("User token created");
+      } else {
+        let helper = await bucketHelper.init(
+          userToken.threadId,
+          state.keyInfo.key,
+          state.keyInfo.secret,
+          state.keyInfo.type
+        );
+        commit(mutations.SET_USER_ID, helper[1]);
+        commit(mutations.SET_USER_LIBP2P_ID, helper[2]);
+      }
+
+      console.log(userToken);
+
+			// Sets up the needed IDs for Textile interactions
+      
+
       // commit(mutations.SET_USER_ID, helper[0]);
-      commit(mutations.SET_USER_ID, helper[1]);
-			commit(mutations.SET_USER_LIBP2P_ID, helper[2]);
+      
 			
       window.ethereum.enable();
     },

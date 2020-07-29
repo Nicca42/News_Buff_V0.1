@@ -12,7 +12,7 @@
     "lint": "vue-cli-service lint",
     "start": "etherlime ganache -q --networkId=1337 --gasLimit=9000000",
     "cbuild": "etherlime compile",
-    "deploy:local": "etherlime --help",
+    "deploy:local": "etherlime deploy --network=local --runs=500",
     "test": "etherlime test"
   },
   "dependencies": {
