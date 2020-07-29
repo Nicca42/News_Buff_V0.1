@@ -57,7 +57,7 @@
         <md-list-item>
           <md-icon>create</md-icon>
           <span class="md-list-item-text">
-            <router-link to="/ListPost">List New Post</router-link>
+            <router-link to="/ListPost">Create New Post</router-link>
           </span>
         </md-list-item>
 

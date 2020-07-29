@@ -209,9 +209,15 @@ class ThreadsDbHelper {
 
     loadAuthorsContent = async (author:string): Promise<any> => {
         if (!this.identity) {
-            throw new Error('Identity not found')
+            throw new Error('Identity not defined')
         }
-
+        // resetting expiring key (i think)
+        this.client = await Client.withKeyInfo(this.keyInfo);
+        // setting a new token
+        let clientToken = await this.client.getToken(
+            this.identity
+        );
+        
         let query = new Where('contentAuthor').eq(author);
 
         let content = await this.client.find(

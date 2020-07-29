@@ -55,7 +55,10 @@ export default new Vuex.Store({
         image: "https://www.dw.com/image/47689419_101.jpg",
         tags: ["Moderated (x6)", "Verified sources", "Verified sources"],
       },
-    ],
+		],
+		authorsPosts: [
+
+		],
   },
   mutations: {
     [mutations.SET_USER_ID](state, identity) {
@@ -77,6 +80,11 @@ export default new Vuex.Store({
       console.log("loaded content set to: ");
       state.loadedContent = loadedContent;
       console.log(state.loadedContent);
+		},
+    [mutations.ADD_AUTHOR_POST](state, authorPost) {
+      console.log("Author post added: ");
+      state.authorsPosts.push(authorPost);
+      console.log(state.authorsPosts);
 		},
 		[mutations.SET_SIGNER](state, signer) {
       console.log("signer set to: ");
@@ -184,7 +192,29 @@ export default new Vuex.Store({
         params.title,
         params.description,
         params.body
-      );
+			);
+			console.log("\n>>>\tSucessfully added post");
+    },
+    [actions.GET_ALL_AUTHOR_POSTS]: async function({ commit, dispatch, state }) {
+      let posts = await bucketHelper.loadAuthorsContent(state.userAddress);
+			console.log(posts.instancesList);
+			console.log(posts.instancesList[0]);
+
+			posts.instancesList.forEach(
+				function (post) {
+					let formatPost = {
+						id: post._id,
+						title: post.contentTitle,
+						authorName: "Blank for now",
+						publisher: post.contentAuthor,
+						abstract: post.contentDescription,
+						body: post.contentBody,
+						image: null,
+						tags: [],
+					};
+					commit(mutations.ADD_AUTHOR_POST, formatPost);
+				}
+			);
     },
     [actions.GET_ALL_POSTS]: async function(
       { commit, dispatch, state },
