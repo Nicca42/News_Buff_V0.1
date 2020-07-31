@@ -294,28 +294,33 @@ export default new Vuex.Store({
 				});
         commit(mutations.ADD_AUTHOR_POST, authorsPosts);
     },
-    [actions.GET_ALL_POSTS]: async function({ commit, dispatch, state }, params) {
-       console.log("IN get all posts");
-       let posts = await bucketHelper.loadContent();
-			console.log(posts.instancesList);
-      console.log(posts.instancesList[0]);
-
+    /**
+     * @notice Pulls all the posts from the ThreadDB and adds any posts that the
+     * state does not currently have.
+     */
+    [actions.GET_ALL_POSTS]: async function({ commit, state }) {
+      // Gets all the posts from the ThreadDB
+      let posts = await bucketHelper.loadContent();
+      // Checks if any of these posts are not in the store and adds them
       posts.instancesList.forEach(
         function (post) {
-          let formatPost = {
-						id: post._id,
-						title: post.contentTitle,
-						authorName: "Blank for now",
-						publisher: post.contentAuthor,
-						abstract: post.contentDescription,
-						body: post.contentBody,
-						image: null,
-						tags: [],
-          };
+          // Checks if the post is not in the existing posts array
           let result = state.posts.findIndex(function (element) {
-            return element.id == formatPost.id;
+            return element.id == post._id;
           });
+          // If the post is unique it formats and adds it
           if(result == -1) {
+            let formatPost = {
+              id: post._id,
+              title: post.contentTitle,
+              authorName: "Blank for now",
+              publisher: post.contentAuthor,
+              abstract: post.contentDescription,
+              body: post.contentBody,
+              image: null,
+              tags: [],
+            };
+            // Adds each unique post to the state
             commit(mutations.ADD_POST, formatPost);
           }
       });
