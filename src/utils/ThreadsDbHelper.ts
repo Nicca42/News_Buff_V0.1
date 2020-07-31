@@ -105,8 +105,8 @@ class ThreadsDbHelper {
             this.identity = restored;
             identityString = this.identity.toString();
             this.idIdentity = restored;
-            // If the ID does not exist, it creates a new ID
         } catch (e) {
+            // If the ID does not exist, it creates a new ID
             try {
                 // Generates a random ID
                 const genIdentity = await Libp2pCryptoIdentity.fromRandom();
@@ -193,6 +193,13 @@ class ThreadsDbHelper {
         if (!this.identity) {
             throw new Error('Identity not found')
         }
+
+        // resetting expiring key (i think)
+        this.client = await Client.withKeyInfo(this.keyInfo);
+        // setting a new token
+        let clientToken = await this.client.getToken(
+            this.identity
+        );
 
         let content = await this.client.find(
             this.threadID, 

@@ -32,7 +32,7 @@ export default new Vuex.Store({
     ethers: null,
     provider: null,
     signer: null,
-    contentIdCounter: 1,
+    contentIdCounter: 2,
     loadedContent: null,
     account: null,
     userAddress: null,
@@ -43,7 +43,7 @@ export default new Vuex.Store({
         id: 0,
         title:
           "Black Lives Matter Protests create real change despite drop in coverage",
-        authorName: "Nicholase Cage",
+        authorName: "Nicolas Cage",
         publisher: "Cage the Times",
         abstract:
           "Weeks of protests that where met with the same police brutality they where protesting have started seeing the fruits of their efforts. A bill was introduced to hold police accountable for their actions, Minneapolis pledges to disband their police department, and all of this desplite main stream news outlets dropping coverage of the protests after the few inceidence of looting stopped, and thus made coverage harder to sensationalise.",
@@ -56,7 +56,7 @@ export default new Vuex.Store({
       {
         id: 1,
         title: "Yeman humanitarian crisis pushed over the edge by Covid-19",
-        authorName: "Veronica Couttes",
+        authorName: "Veronica Coutts",
         publisher: "News Buff weekly",
         abstract:
           "The U.N termed Yeman the “world’s worst humanitarian crisis” before the pandemic hit. 80% of the population requires humanitarian aid. The U.N was unable to fundraise the required amounts, and as a result the vunrabile population have now been put on half rations. 20% of Yemans districts are without a medical doctor. This situation has only been made worse by the drop of funding provided by the UAE.",
@@ -93,6 +93,11 @@ export default new Vuex.Store({
       console.log("Author post added: ");
       state.authorsPosts = authorPost;
       console.log(state.authorsPosts);
+		},
+    [mutations.ADD_POST](state, post) {
+      console.log("Posts post added: ");
+      state.posts.push(post);
+      console.log(state.posts);
 		},
 		[mutations.SET_SIGNER](state, signer) {
       console.log("signer set to: ");
@@ -289,11 +294,31 @@ export default new Vuex.Store({
 				});
         commit(mutations.ADD_AUTHOR_POST, authorsPosts);
     },
-    [actions.GET_ALL_POSTS]: async function(
-      { commit, dispatch, state },
-      params
-    ) {
-      console.log("IN get all posts");
+    [actions.GET_ALL_POSTS]: async function({ commit, dispatch, state }, params) {
+       console.log("IN get all posts");
+       let posts = await bucketHelper.loadContent();
+			console.log(posts.instancesList);
+      console.log(posts.instancesList[0]);
+
+      posts.instancesList.forEach(
+        function (post) {
+          let formatPost = {
+						id: post._id,
+						title: post.contentTitle,
+						authorName: "Blank for now",
+						publisher: post.contentAuthor,
+						abstract: post.contentDescription,
+						body: post.contentBody,
+						image: null,
+						tags: [],
+          };
+          let result = state.posts.findIndex(function (element) {
+            return element.id == formatPost.id;
+          });
+          if(result == -1) {
+            commit(mutations.ADD_POST, formatPost);
+          }
+      });
     },
   },
   modules: {},
