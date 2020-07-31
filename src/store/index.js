@@ -91,7 +91,7 @@ export default new Vuex.Store({
 		},
     [mutations.ADD_AUTHOR_POST](state, authorPost) {
       console.log("Author post added: ");
-      state.authorsPosts = authorPost;
+      state.authorsPosts.push(authorPost);
       console.log(state.authorsPosts);
 		},
     [mutations.ADD_POST](state, post) {
@@ -271,28 +271,51 @@ export default new Vuex.Store({
 
       state.contentIdCounter += 1;
     },
-    [actions.GET_ALL_AUTHOR_POSTS]: async function({ commit, dispatch, state }) {
+    /**
+     * @notice Pulls all the authors posts from the ThreadDB and adds any posts
+     * that the state does not have.
+     */
+    [actions.GET_ALL_AUTHOR_POSTS]: async function({ commit, state }) {
+      // Gets all the authors posts from the ThreadDB
       let posts = await bucketHelper.loadAuthorsContent(state.userAddress);
-			console.log(posts.instancesList);
-      console.log(posts.instancesList[0]);
-      
-      let authorsPosts = [];
-
-			posts.instancesList.forEach(
-				function (post) {
-					let formatPost = {
-						id: post._id,
-						title: post.contentTitle,
-						authorName: "Blank for now",
-						publisher: post.contentAuthor,
-						abstract: post.contentDescription,
-						body: post.contentBody,
-						image: null,
-						tags: [],
-          };
-          authorsPosts.push(formatPost);
-				});
-        commit(mutations.ADD_AUTHOR_POST, authorsPosts);
+      // Checks if any of these posts are not in the store and adds them
+      posts.instancesList.forEach(
+        function (post) {
+          if(state.authorsPosts.length > 0) {
+            // Checks if the post is not in the existing posts array
+            let result = state.authorsPosts.findIndex(function (element) {
+              return element.id == post._id;
+            });
+            // If the post is unique it formats and adds it
+            if(result == -1) {
+              let formatPost = {
+                id: post._id,
+                title: post.contentTitle,
+                authorName: "Blank for now",
+                publisher: post.contentAuthor,
+                abstract: post.contentDescription,
+                body: post.contentBody,
+                image: null,
+                tags: [],
+              };
+              // Adds each unique post to the state
+              commit(mutations.ADD_AUTHOR_POST, formatPost);
+            }
+          } else {
+            let formatPost = {
+              id: post._id,
+              title: post.contentTitle,
+              authorName: "Blank for now",
+              publisher: post.contentAuthor,
+              abstract: post.contentDescription,
+              body: post.contentBody,
+              image: null,
+              tags: [],
+            };
+            // Adds each unique post to the state
+            commit(mutations.ADD_AUTHOR_POST, formatPost);
+          }
+      });
     },
     /**
      * @notice Pulls all the posts from the ThreadDB and adds any posts that the
@@ -304,12 +327,28 @@ export default new Vuex.Store({
       // Checks if any of these posts are not in the store and adds them
       posts.instancesList.forEach(
         function (post) {
-          // Checks if the post is not in the existing posts array
-          let result = state.posts.findIndex(function (element) {
-            return element.id == post._id;
-          });
-          // If the post is unique it formats and adds it
-          if(result == -1) {
+          // Checking if the array is empty
+          if(state.posts.length > 0) {
+            // Checks if the post is not in the existing posts array
+            let result = state.posts.findIndex(function (element) {
+              return element.id == post._id;
+            });
+            // If the post is unique it formats and adds it
+            if(result == -1) {
+              let formatPost = {
+                id: post._id,
+                title: post.contentTitle,
+                authorName: "Blank for now",
+                publisher: post.contentAuthor,
+                abstract: post.contentDescription,
+                body: post.contentBody,
+                image: null,
+                tags: [],
+              };
+              // Adds each unique post to the state
+              commit(mutations.ADD_POST, formatPost);
+            }
+          } else {
             let formatPost = {
               id: post._id,
               title: post.contentTitle,
