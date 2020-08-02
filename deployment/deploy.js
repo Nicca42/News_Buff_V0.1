@@ -1,6 +1,7 @@
 require('dotenv').config();
 
 const UniqueUserTokenABI = require('../build/UniqueUserTokens.json');
+const MockTokenABI = require('../build/MockToken.json');
 
 const etherlime = require('etherlime-lib');
 
@@ -35,9 +36,13 @@ const deploy = async (network, secret) => {
 
 	const UniqueUserToken = await deploy(UniqueUserTokenABI);
 
-	var token = { Contract: "Token", Address: UniqueUserToken.contract.address };
+	var token = { Contract: "Unique User Token", Address: UniqueUserToken.contract.address };
 
-	console.table([token]);
+	const MockToken = await deploy(MockTokenABI);
+
+	var mockToken = { Contract: "Mock Token", Address: MockToken.contract.address };
+
+	console.table([token, mockToken]);
 };
 
 module.exports = {
