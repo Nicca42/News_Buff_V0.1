@@ -325,18 +325,12 @@ export default new Vuex.Store({
      */
     [actions.MAKE_TIP]: async function({ commit, dispatch, state }, params) {
       console.log("Tipping creator...");
-      console.log(params.postId);
-      console.log(params.value);
-      console.log(params.address);
-      let result = await ContractHelper.tipCreator(
+      await ContractHelper.tipCreator(
         state.ethers,
         state.mockToken.mockContractInstance,
         params.address,
         params.value
       );
-
-      console.log(result);
-      console.log("> Successfully tiped creator");
     },
     /**
      * @notice Pulls all the authors posts from the ThreadDB and adds any posts

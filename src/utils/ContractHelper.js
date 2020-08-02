@@ -49,15 +49,16 @@ const createUserToken = async (_uniqueUserTokenInstance, _userName, _userThreadI
         _userName,
         _userThreadId
     );
-
-    // let result = await _uniqueUserTokenInstance.verboseWaitForTransaction(
-    //     userTokenTx,
-    //     "Creating user token..."
-    // );
-
     return(userTokenTx);
 };
 
+/**
+ * @notice Allows a user to freely mint the mock tokens
+ * @param ethers An instance of ethers
+ * @param _mockTokenInstance The instance of the mock token
+ * @param _userAddress The address of the user
+ * @param _amount The amount of tokens getting minted to the user
+ */
 const mintUserToken = async (ethers, _mockTokenInstance, _userAddress, _amount) => {
     let userTokenTx = await _mockTokenInstance.mint(
         _userAddress,
@@ -66,14 +67,28 @@ const mintUserToken = async (ethers, _mockTokenInstance, _userAddress, _amount) 
     return(userTokenTx);
 };
 
+/**
+ * @notice Allows a user to tip a creator
+ * @param ethers An instance of ethers
+ * @param _mockTokenInstance The instance of the mock token
+ * @param _creatorAddress The address of the creator 
+ * @param _amount The amount of tokens to be sent to the creator
+ */
 const tipCreator = async (ethers, _mockTokenInstance, _creatorAddress, _amount) => {
     let userTokenTx = await _mockTokenInstance.transfer(
         _creatorAddress,
         ethers.utils.parseUnits(_amount.toString(), 18),
     );
+    console.log("> Successfully tipped creator");
+    
     return(userTokenTx);
 };
 
+/**
+ * @notice Adds the id of the content to the users unique token
+ * @param _uniqueUserTokenInstance The instance of the unique token
+ * @param _contentId The id of the content
+ */
 const addContent = async (_uniqueUserTokenInstance, _contentId) => {
     await _uniqueUserTokenInstance.createContent(
         _contentId
