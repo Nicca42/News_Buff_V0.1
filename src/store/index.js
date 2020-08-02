@@ -49,6 +49,7 @@ export default new Vuex.Store({
         title:
           "Black Lives Matter Protests create real change despite drop in coverage",
         authorName: "Nicolas Cage",
+        contentAuthorAddress: "0xd4Fa489Eacc52BA59438993f37Be9fcC20090E39",
         publisher: "Cage the Times",
         abstract:
           "Weeks of protests that where met with the same police brutality they where protesting have started seeing the fruits of their efforts. A bill was introduced to hold police accountable for their actions, Minneapolis pledges to disband their police department, and all of this desplite main stream news outlets dropping coverage of the protests after the few inceidence of looting stopped, and thus made coverage harder to sensationalise.",
@@ -62,6 +63,7 @@ export default new Vuex.Store({
         id: 1,
         title: "Yeman humanitarian crisis pushed over the edge by Covid-19",
         authorName: "Veronica Coutts",
+        contentAuthorAddress: "0xd4Fa489Eacc52BA59438993f37Be9fcC20090E39",
         publisher: "News Buff weekly",
         abstract:
           "The U.N termed Yeman 'the world’s worst humanitarian crisis' before the pandemic hit. 80% of the population requires humanitarian aid. The U.N was unable to fundraise the required amounts, and as a result the vunrabile population have now been put on half rations. 20% of Yemans districts are without a medical doctor. This situation has only been made worse by the drop of funding provided by the UAE.",
@@ -275,6 +277,7 @@ export default new Vuex.Store({
       await bucketHelper.createContent(
         state.contentIdCounter.toString(),
         params.author,
+        state.userAddress,
         params.title,
         params.description,
         params.content
@@ -303,6 +306,7 @@ export default new Vuex.Store({
 			await bucketHelper.createContent(
         state.contentIdCounter.toString(),
         state.userAddress,
+        state.userAddress,
         params.title,
         params.description,
         params.body
@@ -315,6 +319,24 @@ export default new Vuex.Store({
       );
 
       state.contentIdCounter += 1;
+    },
+    /**
+     * @notice This allows a user to tip an author
+     */
+    [actions.MAKE_TIP]: async function({ commit, dispatch, state }, params) {
+      console.log("Tipping creator...");
+      console.log(params.postId);
+      console.log(params.value);
+      console.log(params.address);
+      let result = await ContractHelper.tipCreator(
+        state.ethers,
+        state.mockToken.mockContractInstance,
+        params.address,
+        params.value
+      );
+
+      console.log(result);
+      console.log("> Successfully tiped creator");
     },
     /**
      * @notice Pulls all the authors posts from the ThreadDB and adds any posts

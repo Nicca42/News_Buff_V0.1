@@ -6,5 +6,6 @@ export const CREATE_USER = "CREATE_USER";
 export const CREATE_POST = "CREATE_POST";
 export const GET_ALL_POSTS = "GET_ALL_POSTS";
 export const GET_ALL_AUTHOR_POSTS = "GET_ALL_AUTHOR_POSTS";
+export const MAKE_TIP = "MAKE_TIP";
 
 export const SET_ETHERS = "SET_ETHERS";

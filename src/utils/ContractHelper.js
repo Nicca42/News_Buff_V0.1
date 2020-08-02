@@ -66,6 +66,14 @@ const mintUserToken = async (ethers, _mockTokenInstance, _userAddress, _amount) 
     return(userTokenTx);
 };
 
+const tipCreator = async (ethers, _mockTokenInstance, _creatorAddress, _amount) => {
+    let userTokenTx = await _mockTokenInstance.transfer(
+        _creatorAddress,
+        ethers.utils.parseUnits(_amount.toString(), 18),
+    );
+    return(userTokenTx);
+};
+
 const addContent = async (_uniqueUserTokenInstance, _contentId) => {
     await _uniqueUserTokenInstance.createContent(
         _contentId
@@ -80,5 +88,6 @@ module.exports = {
     getUserToken,
     createUserToken,
     mintUserToken,
+    tipCreator,
     addContent
 };
