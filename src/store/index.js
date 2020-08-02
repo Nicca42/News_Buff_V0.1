@@ -9,6 +9,7 @@ const bucketHelper = new ThreadsDbHelper(process.env.VUE_APP_THREAD_ID);
 import { getNetIdString } from "@/utils/ToolsHelper";
 import * as ContractHelper from "@/utils/ContractHelper";
 import UniqueUserTokensABI from "../../build/UniqueUserTokens.json";
+import MockTokenABI from '../../build/MockToken.json';
 
 Vue.use(Vuex);
 
@@ -29,6 +30,10 @@ export default new Vuex.Store({
       tokenContractInstance: null,
       tokenContractAddress: null
     },
+    mockToken: {
+      mockContractInstance: null,
+      mockContractAddress: null,
+    },
     ethers: null,
     provider: null,
     signer: null,
@@ -44,6 +49,7 @@ export default new Vuex.Store({
         title:
           "Black Lives Matter Protests create real change despite drop in coverage",
         authorName: "Nicolas Cage",
+        contentAuthorAddress: "0xd4Fa489Eacc52BA59438993f37Be9fcC20090E39",
         publisher: "Cage the Times",
         abstract:
           "Weeks of protests that where met with the same police brutality they where protesting have started seeing the fruits of their efforts. A bill was introduced to hold police accountable for their actions, Minneapolis pledges to disband their police department, and all of this desplite main stream news outlets dropping coverage of the protests after the few inceidence of looting stopped, and thus made coverage harder to sensationalise.",
@@ -57,9 +63,10 @@ export default new Vuex.Store({
         id: 1,
         title: "Yeman humanitarian crisis pushed over the edge by Covid-19",
         authorName: "Veronica Coutts",
+        contentAuthorAddress: "0xd4Fa489Eacc52BA59438993f37Be9fcC20090E39",
         publisher: "News Buff weekly",
         abstract:
-          "The U.N termed Yeman the “world’s worst humanitarian crisis” before the pandemic hit. 80% of the population requires humanitarian aid. The U.N was unable to fundraise the required amounts, and as a result the vunrabile population have now been put on half rations. 20% of Yemans districts are without a medical doctor. This situation has only been made worse by the drop of funding provided by the UAE.",
+          "The U.N termed Yeman 'the world’s worst humanitarian crisis' before the pandemic hit. 80% of the population requires humanitarian aid. The U.N was unable to fundraise the required amounts, and as a result the vunrabile population have now been put on half rations. 20% of Yemans districts are without a medical doctor. This situation has only been made worse by the drop of funding provided by the UAE.",
         body:
           "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum",
         image: "https://www.dw.com/image/47689419_101.jpg",
@@ -138,10 +145,20 @@ export default new Vuex.Store({
       console.log("contract instance set to: ");
       console.log(state.tokenInfo.tokenContractInstance);
     },
+    [mutations.SET_MOCK_CONTRACT_INSTANCE](state, instance) {
+      state.mockToken.mockContractInstance = instance;
+      console.log("mock contract instance set to: ");
+      console.log(state.mockToken.mockContractInstance);
+    },
     [mutations.SET_CONTRACT_ADDRESS](state, address) {
       state.tokenInfo.tokenContractAddress = address;
       console.log("contract address set to: ");
       console.log(state.tokenInfo.tokenContractAddress);
+    },
+    [mutations.SET_MOCK_CONTRACT_ADDRESS](state, address) {
+      state.mockToken.mockContractAddress = address;
+      console.log("mock contract address set to: ");
+      console.log(state.mockToken.mockContractAddress);
     }
   },
   actions: {
@@ -163,16 +180,26 @@ export default new Vuex.Store({
       commit(mutations.SET_USER_ADDRESS, address);
       
       // Setting up contract info
-      let tokenAddress = await ContractHelper.getTokenAddress(state.provider);
-      commit(mutations.SET_CONTRACT_ADDRESS, tokenAddress);
+      let tokensAddress = await ContractHelper.getTokenAddress(state.provider);
+      commit(mutations.SET_CONTRACT_ADDRESS, tokensAddress.unique);
+      commit(mutations.SET_MOCK_CONTRACT_ADDRESS, tokensAddress.mock);
       // Getting the contract instance
       let tokenContractInstance = await ContractHelper.getContractInstance(
-        state.provider,
+        state.tokenInfo.tokenContractAddress,
         state.ethers,
         state.signer,
         UniqueUserTokensABI.abi
       );
       commit(mutations.SET_CONTRACT_INSTANCE, tokenContractInstance);
+
+      let mockInstance = await ContractHelper.getContractInstance(
+        state.mockToken.mockContractAddress,
+        state.ethers,
+        state.signer,
+        MockTokenABI.abi
+      );
+      commit(mutations.SET_MOCK_CONTRACT_INSTANCE, mockInstance);
+
       /**
        * Getting the users token. This will get any pre-existing token that the
        * user has, as well as their user name. If then do not have a token,
@@ -202,6 +229,16 @@ export default new Vuex.Store({
           helper[1]
         );
         console.log("> Token created for user");
+
+        console.log("Loading user with mock tokens...");
+        let txResults = await ContractHelper.mintUserToken(
+          state.ethers,
+          state.mockToken.mockContractInstance,
+          state.userAddress,
+          100000000000000000000
+        );
+        console.log(txResults)
+        console.log("> Successfuly loaded user with mock tokens");
       } else {
         console.log("User has existing Thread ID\nLoading Thread ID...");
         let helper = await bucketHelper.init(
@@ -213,6 +250,16 @@ export default new Vuex.Store({
         console.log("> Thread ID loaded");
         commit(mutations.SET_USER_ID, helper[1]);
         commit(mutations.SET_USER_LIBP2P_ID, helper[2]);
+
+        console.log("Loading user with mock tokens...");
+        let txResults = await ContractHelper.mintUserToken(
+          state.ethers,
+          state.mockToken.mockContractInstance,
+          state.userAddress,
+          100
+        );
+        console.log(txResults)
+        console.log("> Successfuly loaded user with mock tokens");
       }
 
       console.log(userToken);
@@ -230,6 +277,7 @@ export default new Vuex.Store({
       await bucketHelper.createContent(
         state.contentIdCounter.toString(),
         params.author,
+        state.userAddress,
         params.title,
         params.description,
         params.content
@@ -258,6 +306,7 @@ export default new Vuex.Store({
 			await bucketHelper.createContent(
         state.contentIdCounter.toString(),
         state.userAddress,
+        state.userAddress,
         params.title,
         params.description,
         params.body
@@ -270,6 +319,18 @@ export default new Vuex.Store({
       );
 
       state.contentIdCounter += 1;
+    },
+    /**
+     * @notice This allows a user to tip an author
+     */
+    [actions.MAKE_TIP]: async function({ commit, dispatch, state }, params) {
+      console.log("Tipping creator...");
+      await ContractHelper.tipCreator(
+        state.ethers,
+        state.mockToken.mockContractInstance,
+        params.address,
+        params.value
+      );
     },
     /**
      * @notice Pulls all the authors posts from the ThreadDB and adds any posts

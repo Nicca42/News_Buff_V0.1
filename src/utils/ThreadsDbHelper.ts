@@ -7,6 +7,7 @@ import { fromEvent } from 'rxjs';
 interface ContentInstance {
     _id: string,
     contentAuthor: string,
+    contentAuthorAddress: string,
     contentTitle: string,
     contentDescription: string,
     contentBody: string
@@ -36,6 +37,10 @@ let ContentSchema: JSONSchema = {
         contentAuthor: {
             type: "string",
             description: "The author of the content"
+        },
+        contentAuthorAddress: {
+            type: "string",
+            description: "The Ethereum address of the author"
         },
         contentTitle: {
             type: "string",
@@ -173,6 +178,7 @@ class ThreadsDbHelper {
     createContent = async (
             _id: string,
             contentAuthor: string,
+            contentAuthorAddress: string,
             contentTitle: string,
             contentDescription: string,
             contentBody: string
@@ -190,6 +196,7 @@ class ThreadsDbHelper {
         let content:ContentInstance = {
             _id,
             contentAuthor,
+            contentAuthorAddress,
             contentTitle,
             contentDescription,
             contentBody

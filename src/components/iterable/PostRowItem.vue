@@ -80,6 +80,7 @@ export default {
       this.MAKE_TIP({
         postId: this.postInformation.postId,
         value: this.offer,
+        address: this.postInformation.contentAuthorAddress,
       });
     },
     navigateToPost() {
