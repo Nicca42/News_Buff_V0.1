@@ -5,7 +5,7 @@ import * as actions from "./actions";
 import * as mutations from "./mutation-types";
 // Importing helper tools
 import { ThreadsDbHelper } from "!awesome-typescript-loader!../utils/ThreadsDbHelper.ts";
-const bucketHelper = new ThreadsDbHelper();
+const bucketHelper = new ThreadsDbHelper(process.env.VUE_APP_THREAD_ID);
 import { getNetIdString } from "@/utils/ToolsHelper";
 import * as ContractHelper from "@/utils/ContractHelper";
 import UniqueUserTokensABI from "../../build/UniqueUserTokens.json";

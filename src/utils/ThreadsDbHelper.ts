@@ -54,6 +54,7 @@ let ContentSchema: JSONSchema = {
 
 class ThreadsDbHelper {
     public threadID: ThreadID;
+    public threadIdString: string;
     private client: Client;
     private clientToken: string;
     private clientAuth: UserAuth;
@@ -63,8 +64,8 @@ class ThreadsDbHelper {
     private idIdentity?: Identity;
     private collection?: Collection<ContentInstance>;
 
-    constructor() {        
-        this.threadID = ThreadID.fromRandom();
+    constructor(threadId:string) {        
+        this.threadIdString = threadId;//ThreadID.fromRandom();
     }
 
     init = async (id:string, keyKey:string, keySecret: string, keyType: number): Promise<Array<any>> => {
@@ -124,13 +125,26 @@ class ThreadsDbHelper {
         );
         this.clientToken = clientToken;
 
-        await this.client.newDB(this.threadID);
+        let threads = await this.client.listThreads();
+        console.log(threads.listList)
+        console.log(threads.listList[0].id)
 
-        await this.client.newCollection(
-            this.threadID, 
-            'basic-content', 
-            ContentSchema
+        this.threadID = ThreadID.fromString(threads.listList[0].id);
+
+        console.log(this.threadID)
+
+        let dbInfo = await this.client.getDBInfo(this.threadID);
+        console.log(dbInfo);
+        
+        await this.client.joinFromInfo(
+            dbInfo
         );
+
+        // await this.client.newCollection(
+        //     this.threadID, 
+        //     'basic-content', 
+        //     ContentSchema
+        // );
 
         console.log("Init complete")
 
