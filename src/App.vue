@@ -13,17 +13,19 @@
           class="md-layout md-gutter md-alignment-center-right"
           style="text-align:right; width:500px"
         >
-          <span class="md-caption" style="float: right;">
-            {{ currentNetwork }}
-          </span>
-          <div class="md-layout-item">
+          <div class="md-layout-item" v-if="!userAddress">
+            <md-button class="md-raised md-accent" @click="connectWallet"
+              >🦊Connect</md-button
+            >
+          </div>
+          <div class="md-layout-item" v-if="userAddress">
             <div class="md-subheading">
               {{ userProfile.firstName }} {{ userProfile.lastName }}
             </div>
           </div>
-          <div class="md-layout-item">
+          <div class="md-layout-item" v-if="userAddress">
             <div class="md-subheading">
-              <clickable-address :light="true" :eth-address="account" />
+              <clickable-address :light="true" :eth-address="userAddress" />
             </div>
           </div>
         </div>
@@ -73,9 +75,7 @@
         <md-list-item>
           <md-icon>code</md-icon>
           <span class="md-list-item-text">
-            <a
-              href="https://github.com/Nicca42/News_Buff_V0.1"
-              target="__blank"
+            <a href="https://github.com/Nicca42/News_Buff_V0.1" target="__blank"
               >Github</a
             >
           </span>
@@ -115,9 +115,7 @@
         </span>
         <span>
           Censorship resistant news made with ❤️ by
-          <a href="https://github.com/Nicca42/News_Buff_V0.1"
-            >News Buff</a
-          >
+          <a href="https://github.com/Nicca42/News_Buff_V0.1">News Buff</a>
           📰
         </span>
       </div>
@@ -149,21 +147,32 @@ export default {
   },
   methods: {
     ...mapActions(["SET_UP", "SET_ETHERS"]),
-    // redirect(_path) {
-    //   router.push({ name: _path });
-    // },
+    connectWallet() {
+      this.SET_UP();
+    },
   },
   async mounted() {
-    if(window.ethereum) {
+    if (window.ethereum) {
       this.ethers = ethers;
       this.SET_ETHERS(this.ethers);
-
-      this.provider = new ethers.providers.Web3Provider(window.ethereum);
-      this.SET_UP(this.provider);
+      // this.provider = new ethers.providers.Web3Provider(window.ethereum);
+      // this.SET_UP(this.provider);
     }
   },
   computed: {
-    ...mapState(["currentNetwork", "account", "userProfile"]),
+    ...mapState([
+      "currentNetwork",
+      "userAddress",
+      "userProfile",
+      "userNeedsAccount",
+    ]),
+    monitorState() {
+      if (this.userNeedsAccount) {
+        router.push({ path: "/CreateProfile" });
+        return "routing...";
+      }
+      return null;
+    },
   },
 };
 </script>
@@ -179,7 +188,7 @@ export default {
     primary: #828ec6,
     // The primary color of your brand
       accent: #dd688c
-      // The secondary color of your brand,,,,,,,,,,,,,,,,,,,,,,,,,,
+      // The secondary color of your brand,,,,,,,,,,,,,,,,,,,,,,,,,,,
   )
 );
 @import "~vue-material/dist/theme/all"; // Apply the theme

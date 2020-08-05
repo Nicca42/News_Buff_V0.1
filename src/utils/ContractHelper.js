@@ -2,19 +2,18 @@
  * @param ethers Instance of ethers
  * @notice This function gets the address of the contract for the various networks
  */
-const getTokenAddress = async (_ethers) => {
-    let network = await _ethers.getNetwork();
-
-    switch (network.chainId) {
-        case 1: // Mainnet
+const getTokenAddress = async (_network) => {
+    console.log(_network)
+    switch (_network) {
+        case 'Main Ethereum Network (Unsupported)': // Mainnet
             return '';
-        case 3: // Ropsten
+        case 'Ropsten Ethereum Test Network (Unsupported)': // Ropsten
             return '';
-        case 4: // Rinkeby
+        case 'Rinkeby Ethereum Test Network': // Rinkeby
             return '';
-        case 42: // Kovan
+        case 'Kovan Ethereum Test Network (Unsupported)': // Kovan
             return '';
-        case 1337: // Local
+        case 'Local Test Network': // Local
             return {
                 unique: '0xE456065B0290F6606deb30ec9D49C9c2ecDCde90',
                 mock: '0x8D0671D72fa3345839fdC54F815F19FDDcB6617a'

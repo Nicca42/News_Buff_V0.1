@@ -1,3 +1,11 @@
+// Onboard JS stuff
+import Onboard from "bnc-onboard";
+import Notify from "bnc-notify";
+// Ethers
+import ethers from "ethers";
+// 3Box things
+const Box = require("3box");
+// Needed vue things
 import Vue from "vue";
 import Vuex from "vuex";
 // Importing constants
@@ -159,28 +167,172 @@ export default new Vuex.Store({
       state.mockToken.mockContractAddress = address;
       console.log("mock contract address set to: ");
       console.log(state.mockToken.mockContractAddress);
-    }
+    },
+    /**
+     * @notice The following mutations are for 3Box and oboard
+     */
+    [mutations.SET_BOX](state, box) {
+      console.log("box set to: ");
+      state.box = box;
+      console.log(state.box);
+    },
+    [mutations.SET_USER_NEEDS_ACCOUNT](state, userNeedsAccount) {
+      console.log("in mutation");
+      state.userNeedsAccount = userNeedsAccount;
+      console.log("userNeedsAccount set to: ");
+      console.log(state.userNeedsAccount);
+    },
+    [mutations.SET_USER_PROFILE](state, userProfileBox) {
+      console.log("profile mutation");
+      state.userProfileBox = userProfileBox;
+      console.log("userProfileBox set to: ");
+      console.log(state.userProfileBox);
+    },
+    /**
+     * @notice Oboard js mutations
+     */
+    [mutations.SET_ONBOARD](state, onboard) {
+      state.onboard = onboard;
+      console.log("onboard set to: ");
+      console.log(state.onboard);
+    },
+    [mutations.SET_WALLET](state, wallet) {
+      state.wallet = wallet;
+      console.log("wallet set to: ");
+      console.log(state.wallet);
+    },
+    // [mutations.SET_NOTIFIER](state, notifier) {
+    //   state.notifier = notifier;
+    //   console.log("notifier set to: ");
+    //   console.log(state.notifier);
+    // },
   },
   actions: {
 		[actions.SET_ETHERS]: function({commit}, ethers) {
       commit(mutations.SET_ETHERS, ethers);
     },
-    [actions.SET_UP]: async function({ commit, state }, provider) {
-      // Setting up Textile info
-			commit(mutations.SET_PROVIDER, provider);
-			// Converts the network ID into human readable label
-			let network = await getNetIdString(provider);
-			commit(mutations.SET_CURRENT_NETWORK, network);
-			// Gets the signer from the provider
-			let signer = await provider.getSigner();
-			commit(mutations.SET_SIGNER, signer);
-			// Requests the address to connect to from the user
-      await state.provider.send("eth_requestAccounts", []);
-      const address = await state.signer.getAddress();
-      commit(mutations.SET_USER_ADDRESS, address);
-      
+    [actions.SET_UP]: async function({ commit, state }) {
+      /**
+       * @notice Setting up 3Box and onbaord 
+       */
+      const apiKey = process.env.REACT_APP_ONBOARD_API_KEY
+        ? process.env.REACT_APP_ONBOARD_API_KEY
+        : "12153f55-f29e-4f11-aa07-90f10da5d778";
+      const infuraId =
+        process.env.REACT_APP_INFURA_ID || "d5e29c9b9a9d4116a7348113f57770a8";
+      const infuraRpc = `https://${state.network?.name}.infura.io/v3/${infuraId}`;
+
+      const onboard = Onboard({
+        dappId: apiKey,
+        hideBranding: true,
+        networkId: 1, // Default to main net. If on a different network will change with the subscription.
+        subscriptions: {
+          address: (address) => {
+            commit(mutations.SET_USER_ADDRESS, address);
+          },
+          network: async (networkId) => {
+            onboard.config({ networkId: networkId });
+          },
+          wallet: async (wallet) => {
+            if (wallet.provider) {
+              commit(mutations.SET_WALLET, wallet);
+              const ethersProvider = new ethers.providers.Web3Provider(
+                wallet.provider
+              );
+
+              commit(mutations.SET_PROVIDER, ethersProvider);
+              // Converts the network ID into human readable label
+              let network = await getNetIdString(ethersProvider);
+              commit(mutations.SET_CURRENT_NETWORK, network);
+              // Gets the signer from the ethersProvider
+              let signer = await ethersProvider.getSigner();
+              commit(mutations.SET_SIGNER, signer);
+              // Requests the address to connect to from the user
+              await state.provider.send("eth_requestAccounts", []);
+              const address = await state.signer.getAddress();
+              commit(mutations.SET_USER_ADDRESS, address);
+            } else {
+              commit(mutations.SET_PROVIDER, null);
+              commit(mutations.SET_CURRENT_NETWORK, null);
+              commit(mutations.SET_SIGNER, null);
+              commit(mutations.SET_USER_ADDRESS, null);
+            }
+          },
+        },
+        walletSelect: {
+          wallets: [
+            { walletName: "metamask", preferred: true },
+            {
+              walletName: "imToken",
+              rpcUrl:
+                !!state.network && state.network.chainId === 1
+                  ? "https://mainnet-eth.token.im"
+                  : "https://eth-testnet.tokenlon.im",
+              preferred: true,
+            },
+            { walletName: "coinbase", preferred: true },
+            {
+              walletName: "portis",
+              apiKey: process.env.REACT_APP_PORTIS_API_KEY,
+            },
+            { walletName: "trust", rpcUrl: infuraRpc },
+            { walletName: "dapper" },
+            {
+              walletName: "walletConnect",
+              rpc: { [state.network?.chainId || 1]: infuraRpc },
+            },
+            { walletName: "walletLink", rpcUrl: infuraRpc },
+            { walletName: "opera" },
+            { walletName: "operaTouch" },
+            { walletName: "torus" },
+            { walletName: "status" },
+            { walletName: "unilogin" },
+            // { walletName: "authereum" },
+            {
+              walletName: "ledger",
+              rpcUrl: infuraRpc,
+            },
+          ],
+        },
+        walletCheck: [
+          { checkName: "connect" },
+          { checkName: "accounts" },
+          { checkName: "network" },
+          { checkName: "balance", minimumBalance: "0" },
+        ],
+      });
+
+      await onboard.walletSelect();
+
+      commit(mutations.SET_ONBOARD, onboard);
+
+      console.log("set1");
+      // const notify = Notify({
+      //   dappId: apiKey ? apiKey : "",
+      //   networkId: state.network?.chainId || 1,
+      // });
+      // commit(mutations.SET_NOTIFIER, notify);
+      console.log("after");
+
+      await onboard.walletCheck();
+
+      console.log(state.userAddress);
+      console.log("MAKING BOX");
+      const profile = await Box.getProfile(state.userAddress);
+      console.log("profile", profile);
+      commit(mutations.SET_USER_PROFILE, profile);
+      if (profile == {}) {
+        commit(mutations.SET_USER_NEEDS_ACCOUNT, true);
+      }
+      console.log("making box");
+      const box = await Box.openBox(state.userAddress, state.wallet.provider);
+      console.log("box", box);
+      commit(mutations.SET_BOX, box);
+      /**
+       * @notice Setting up ethers, the provider and the users account
+       */
       // Setting up contract info
-      let tokensAddress = await ContractHelper.getTokenAddress(state.provider);
+      let tokensAddress = await ContractHelper.getTokenAddress(state.currentNetwork);
       commit(mutations.SET_CONTRACT_ADDRESS, tokensAddress.unique);
       commit(mutations.SET_MOCK_CONTRACT_ADDRESS, tokensAddress.mock);
       // Getting the contract instance

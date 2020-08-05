@@ -9,6 +9,14 @@ export const SET_CURRENT_NETWORK = "SET_CURRENT_NETWORK";
 export const SET_ETHERS = "SET_ETHERS";
 export const SET_PROVIDER = "SET_PROVIDER";
 export const SET_DAI_ADDRESS = "SET_DAI_ADDRESS";
+// Notify
+export const SET_NOTIFIER = "SET_NOTIFIER";
+export const SET_ONBOARD = "SET_ONBOARD";
+export const SET_WALLET = "SET_WALLET";
+// 3Box
+export const SET_BOX = "SET_BOX";
+export const SET_USER_PROFILE = "SET_USER_PROFILE";
+export const SET_USER_NEEDS_ACCOUNT = "SET_USER_NEEDS_ACCOUNT";
 // User info
 export const SET_USER_DAI_BALANCE = "SET_USER_DAI_BALANCE";
 export const SET_USER_TOKEN_BALANCE = "SET_USER_TOKEN_BALANCE";
