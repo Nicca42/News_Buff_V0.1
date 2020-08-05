@@ -4,11 +4,16 @@
       <div class="md-layout">
         <div class="md-layout-item">
           <md-content style="padding: 20px;">
-            <md-card-header>
+            <md-card-header v-if="!this.userProfile.set">
               <div class="md-title">Welcome to News Buff!</div>
               <div class="md-body">You will need to sign 2 transactions to create your 3Box profile.
                 Once that is complete, please fill in your name and email below. 
                 Clicking create will not generate another transaction.
+              </div>
+            </md-card-header>
+            <md-card-header v-if="this.userProfile.set">
+              <div><h1>Your Profile</h1></div>
+              <div class="md-body">You can update your user profile here.
               </div>
             </md-card-header>
             <br />
@@ -27,7 +32,7 @@
       <div class="md-layout-item md-size-15 md-size-small-0" />
       <md-content class="md-layout-item md-size-70 md-small-size-100">
         <md-card-header>
-          <div class="md-title">
+          <div class="md-title" v-if="!this.userProfile.set">
             To verify your profile ...
           </div>
         </md-card-header>
@@ -95,12 +100,20 @@
           </md-field>
         </md-card-content>
 
-        <md-card-actions>
+        <md-card-actions v-if="!this.userProfile.set">
           <md-button
             type="submit"
             class="md-raised md-accent"
             @click="createUser"
             >Create user</md-button
+          >
+        </md-card-actions v-if="this.userProfile.set">
+        <md-card-actions>
+          <md-button
+            type="submit"
+            class="md-raised md-accent"
+            @click="createUser"
+            >Udate profile</md-button
           >
         </md-card-actions>
       </md-content>
@@ -212,7 +225,7 @@ export default {
     },
   },
   computed: {
-    ...mapState(["posts"]),
+    ...mapState(["posts", "userProfile"]),
     canCreateUser() {
       if (
         this.inputForm.firstName != "" &&

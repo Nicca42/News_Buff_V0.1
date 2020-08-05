@@ -55,7 +55,7 @@ export default new Vuex.Store({
     loadedContent: null,
     account: null,
     userAddress: null,
-    userProfile: { firstName: null, lastName: null },
+    userProfile: { firstName: null, lastName: null, set: false },
     currentNetwork: null,
     posts: [],
     authorsPosts: [],
@@ -188,13 +188,15 @@ export default new Vuex.Store({
      */
     [mutations.SET_USER_FIRST_NAME](state, firstName) {
       state.userProfile.firstName = firstName;
-      console.log("User last name set to: ");
-      console.log(state.userProfile.firstName);
+      console.log("User last name set to: ", state.userProfile.firstName);
     },
     [mutations.SET_USER_LAST_NAME](state, lastName) {
       state.userProfile.lastName = lastName;
-      console.log("User first name set to: ");
-      console.log(state.userProfile.lastName);
+      console.log("User first name set to: ", state.userProfile.lastName);
+    },
+    [mutations.SET_USER_DETAILS_SET](state, set) {
+      state.userProfile.set = set;
+      console.log("User detals set");
     },
     /**
      * @notice The following mutations are for 3Box and oboard
@@ -548,6 +550,7 @@ export default new Vuex.Store({
     [actions.SET_USER_NAME]: function({ commit }, params) {
       commit(mutations.SET_USER_FIRST_NAME, params.firstName);
       commit(mutations.SET_USER_LAST_NAME, params.lastName);
+      commit(mutations.SET_USER_DETAILS_SET, true);
     },
 
     // LOADING ACTIONS
