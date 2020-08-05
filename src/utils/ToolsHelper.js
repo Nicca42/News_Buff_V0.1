@@ -1,7 +1,5 @@
-const getNetIdString = async (ethers) => {
-    let network = await ethers.getNetwork();
-
-    switch (network.chainId) {
+const getNetIdString = async (networkId) => {
+    switch (networkId) {
         case 1:
             return 'Main Ethereum Network (Unsupported)';
         case 3:

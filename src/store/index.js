@@ -242,18 +242,21 @@ export default new Vuex.Store({
       commit(mutations.SET_ETHERS, ethers);
     },
     [actions.SET_UP]: async function({ commit, dispatch, state }) {
-      // Setting up Onboard.js
-      await dispatch(actions.SET_UP_ONBOARD);
-      // Setting up 3Box
-      await dispatch(actions.SET_UP_3BOX);
-      // Setting up the Smart contracts
-      await dispatch(actions.SET_UP_CONTRACTS);
+      try {
+        // Setting up Onboard.js
+        await dispatch(actions.SET_UP_ONBOARD);
+        // Setting up 3Box
+        await dispatch(actions.SET_UP_3BOX);
+        // Setting up the Smart contracts
+        await dispatch(actions.SET_UP_CONTRACTS);
+  
+        // Getting the users token
+        await dispatch(actions.GET_USER_TOKEN);
+      } catch (error) {
+        throw new Error("Failed to set up application", error);
+      }
 
-      // Getting the users token
-      await dispatch(actions.GET_USER_TOKEN);
-
-      
-      if (!userToken.created) {
+      if (!state.userTokenInfo.created) {
         // Sets up the user with a token
         await dispatch(actions.CREATE_USER_THREAD);
         /**
@@ -263,6 +266,8 @@ export default new Vuex.Store({
       } else {
         await dispatch(actions.LOAD_USER_THREAD);
       }
+
+      await dispatch(actions.LOAD_USER_NAMES_FROM_BOX);
 
       window.ethereum.enable();
     },
@@ -291,30 +296,29 @@ export default new Vuex.Store({
           network: async (networkId) => {
             onboard.config({ networkId: networkId });
           },
-          wallet: async (wallet) => {
-            console.log("0a");
+          wallet: async (wallet, networkId) => {
             if (wallet.provider) {
-              console.log("1a");
               commit(mutations.SET_WALLET, wallet);
               const ethersProvider = new ethers.providers.Web3Provider(
                 wallet.provider
               );
               commit(mutations.SET_PROVIDER, ethersProvider);
-              console.log("2a");
               // Converts the network ID into human readable label
-              let network = await getNetIdString(ethersProvider);
-              console.log("2b");
+              let network = await getNetIdString(networkId);
+
               commit(mutations.SET_CURRENT_NETWORK, network);
-              console.log("3a");
+
               // Gets the signer from the ethersProvider
               let signer = await ethersProvider.getSigner();
+
               commit(mutations.SET_SIGNER, signer);
-              console.log("4a");
+
               // Requests the address to connect to from the user
               await state.provider.send("eth_requestAccounts", []);
               const address = await state.signer.getAddress();
+
               commit(mutations.SET_USER_ADDRESS, address);
-              console.log("4a");
+              
             } else {
               commit(mutations.SET_PROVIDER, null);
               commit(mutations.SET_CURRENT_NETWORK, null);
@@ -351,7 +355,6 @@ export default new Vuex.Store({
             { walletName: "torus" },
             { walletName: "status" },
             { walletName: "unilogin" },
-            // { walletName: "authereum" },
             {
               walletName: "ledger",
               rpcUrl: infuraRpc,
@@ -384,6 +387,7 @@ export default new Vuex.Store({
       const profile = await Box.getProfile(state.userAddress);
       console.log(profile.proof_did);
       commit(mutations.SET_USER_PROFILE, profile);
+
       if (profile.proof_did == undefined) {
         console.log(
           "User does not have 3Box account.\nSetting up user account..."
@@ -471,7 +475,7 @@ export default new Vuex.Store({
       console.log("User has existing Thread ID\nLoading Thread ID...");
 
       let helper = await bucketHelper.init(
-        userToken.threadId,
+        state.userTokenInfo.threadId ? state.userTokenInfo.threadId : '',
         state.keyInfo.key,
         state.keyInfo.secret,
         state.keyInfo.type
@@ -517,7 +521,7 @@ export default new Vuex.Store({
     /**
      * @notice Gets the user name from their 3 Box account and then saves it
      */
-    [actions.LOAD_USER_NAMES_FROM_BOX]: async function({ dispatch }) {
+    [actions.LOAD_USER_NAMES_FROM_BOX]: async function({ dispatch, state }) {
       const profileAfter = await state.box.public.all();
       console.log(profileAfter.profileObject);
       let userInfoFromBox = JSON.parse(profileAfter.profileObject);
