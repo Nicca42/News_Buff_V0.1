@@ -57,7 +57,9 @@ export default new Vuex.Store({
     userAddress: null,
     userProfile: { firstName: null, lastName: null },
     currentNetwork: null,
-    posts: [
+    posts: [],
+    authorsPosts: [],
+    examplePosts: [
       {
         id: 0,
         title:
@@ -87,7 +89,6 @@ export default new Vuex.Store({
         tags: ["Moderated (x6)", "Verified sources", "Verified sources"],
       },
     ],
-    authorsPosts: [],
     notify: null,
     onboard: null,
     wallet: null,
@@ -97,39 +98,32 @@ export default new Vuex.Store({
   },
   mutations: {
     [mutations.SET_USER_ID](state, identity) {
-      console.log("identity set to: ");
       state.threadInfo.userId = identity;
-      console.log(state.threadInfo.userId);
+      console.log("identity set to: ", state.threadInfo.userId);
     },
     [mutations.SET_USER_LIBP2P_ID](state, libp2pId) {
-      console.log("identity (libp2p) set to: ");
       state.threadInfo.userLibp2pId = libp2pId;
-      console.log(state.threadInfo.userLibp2pId);
+      console.log("identity (libp2p) set to: ", state.threadInfo.userLibp2pId);
     },
     [mutations.SET_CURRENT_NETWORK](state, network) {
-      console.log("network set to: ");
       state.currentNetwork = network;
-      console.log(state.currentNetwork);
+      console.log("network set to: ", state.currentNetwork);
     },
     [mutations.SET_LOADED_CONTENT](state, loadedContent) {
-      console.log("loaded content set to: ");
       state.loadedContent = loadedContent;
-      console.log(state.loadedContent);
+      console.log("loaded content set to: ", state.loadedContent);
     },
     [mutations.ADD_AUTHOR_POST](state, authorPost) {
-      console.log("Author post added: ");
       state.authorsPosts.push(authorPost);
-      console.log(state.authorsPosts);
+      console.log("Author post added: ", state.authorsPosts);
     },
     [mutations.ADD_POST](state, post) {
-      console.log("Posts post added: ");
       state.posts.push(post);
-      console.log(state.posts);
+      console.log("Posts post added: ", state.posts);
     },
     [mutations.SET_SIGNER](state, signer) {
-      console.log("signer set to: ");
       state.signer = signer;
-      console.log(state.signer);
+      console.log("signer set to: ", state.signer);
     },
     [mutations.SET_USER_ADDRESS](state, address) {
       state.userAddress = address;
@@ -147,43 +141,47 @@ export default new Vuex.Store({
     },
     [mutations.SET_ETHERS](state, ethers) {
       state.ethers = ethers;
-      console.log("ethers set to: ");
-      console.log(state.ethers);
+      console.log("ethers set to: ", state.ethers);
     },
     [mutations.SET_PROVIDER](state, provider) {
       state.provider = provider;
-      console.log("provider set to: ");
-      console.log(state.provider);
+      console.log("provider set to: ", state.provider);
     },
     [mutations.SET_USER_DAI_BALANCE](state, balance) {
       state.userDaiBalance = balance;
-      console.log("user dai balance set to: ");
-      console.log(state.userDaiBalance);
+      console.log("user dai balance set to: ", state.userDaiBalance);
     },
     [mutations.SET_DAI_ADDRESS](state, address) {
       state.daiAddress = address;
-      console.log("dai address set to: ");
-      console.log(state.daiAddress);
+      console.log("dai address set to: ", state.daiAddress);
     },
     [mutations.SET_CONTRACT_INSTANCE](state, instance) {
       state.tokenInfo.tokenContractInstance = instance;
-      console.log("contract instance set to: ");
-      console.log(state.tokenInfo.tokenContractInstance);
+      console.log(
+        "contract instance set to: ",
+        state.tokenInfo.tokenContractInstance
+      );
     },
     [mutations.SET_MOCK_CONTRACT_INSTANCE](state, instance) {
       state.mockToken.mockContractInstance = instance;
-      console.log("mock contract instance set to: ");
-      console.log(state.mockToken.mockContractInstance);
+      console.log(
+        "mock contract instance set to: ",
+        state.mockToken.mockContractInstance
+      );
     },
     [mutations.SET_CONTRACT_ADDRESS](state, address) {
       state.tokenInfo.tokenContractAddress = address;
-      console.log("contract address set to: ");
-      console.log(state.tokenInfo.tokenContractAddress);
+      console.log(
+        "contract address set to: ",
+        state.tokenInfo.tokenContractAddress
+      );
     },
     [mutations.SET_MOCK_CONTRACT_ADDRESS](state, address) {
       state.mockToken.mockContractAddress = address;
-      console.log("mock contract address set to: ");
-      console.log(state.mockToken.mockContractAddress);
+      console.log(
+        "mock contract address set to: ",
+        state.mockToken.mockContractAddress
+      );
     },
     /**
      * @notice Setting the users name
@@ -249,7 +247,7 @@ export default new Vuex.Store({
         await dispatch(actions.SET_UP_3BOX);
         // Setting up the Smart contracts
         await dispatch(actions.SET_UP_CONTRACTS);
-  
+
         // Getting the users token
         await dispatch(actions.GET_USER_TOKEN);
       } catch (error) {
@@ -270,6 +268,8 @@ export default new Vuex.Store({
       await dispatch(actions.LOAD_USER_NAMES_FROM_BOX);
 
       window.ethereum.enable();
+
+      await dispatch(actions.LOAD_EXAMPLE_POSTS);
     },
     /**
      * @notice Setting up onboard.js
@@ -318,7 +318,6 @@ export default new Vuex.Store({
               const address = await state.signer.getAddress();
 
               commit(mutations.SET_USER_ADDRESS, address);
-              
             } else {
               commit(mutations.SET_PROVIDER, null);
               commit(mutations.SET_CURRENT_NETWORK, null);
@@ -475,7 +474,7 @@ export default new Vuex.Store({
       console.log("User has existing Thread ID\nLoading Thread ID...");
 
       let helper = await bucketHelper.init(
-        state.userTokenInfo.threadId ? state.userTokenInfo.threadId : '',
+        state.userTokenInfo.threadId ? state.userTokenInfo.threadId : "",
         state.keyInfo.key,
         state.keyInfo.secret,
         state.keyInfo.type
@@ -615,6 +614,7 @@ export default new Vuex.Store({
     [actions.GET_ALL_POSTS]: async function({ commit, state }) {
       // Gets all the posts from the ThreadDB
       let posts = await bucketHelper.loadContent();
+      console.log(posts);
       // Checks if any of these posts are not in the store and adds them
       posts.instancesList.forEach(function(post) {
         // Checking if the array is empty
@@ -653,6 +653,19 @@ export default new Vuex.Store({
           commit(mutations.ADD_POST, formatPost);
         }
       });
+    },
+    /**
+     * @notice Pulls in the example posts and adds them to the store
+     */
+    [actions.LOAD_EXAMPLE_POSTS]: async function({ commit, state }) {
+      // Gets all the posts from the ThreadDB
+      let posts = state.examplePosts;
+      // Checks if any of these posts are not in the store and adds them
+      for (let i = 0; i < posts.length; i++) {
+        const post = posts[i];
+        // Adds each unique post to the state
+        commit(mutations.ADD_POST, post);
+      }
     },
   },
   modules: {},
