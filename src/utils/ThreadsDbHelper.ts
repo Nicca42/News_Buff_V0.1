@@ -70,7 +70,8 @@ class ThreadsDbHelper {
     private collection?: Collection<ContentInstance>;
 
     constructor(threadId:string) {        
-        this.threadIdString = threadId;//ThreadID.fromRandom();
+        this.threadID = ThreadID.fromRandom();
+        this.threadIdString = this.threadID.toString();
     }
 
     init = async (id:string, keyKey:string, keySecret: string, keyType: number): Promise<Array<any>> => {
@@ -129,33 +130,17 @@ class ThreadsDbHelper {
             this.identity
         );
         this.clientToken = clientToken;
-
-        let threads = await this.client.listThreads();
-        console.log(threads.listList)
-        console.log(threads.listList[0].id)
-
-        this.threadID = ThreadID.fromString(threads.listList[0].id);
-
-        console.log(this.threadID)
-
-        let dbInfo = await this.client.getDBInfo(this.threadID);
-        console.log(dbInfo);
-        
-        await this.client.joinFromInfo(
-            dbInfo
+        await this.client.newDB(this.threadID);
+        await this.client.newCollection(
+            this.threadID, 
+            'basic-content', 
+            ContentSchema
         );
-
-        // await this.client.newCollection(
-        //     this.threadID, 
-        //     'basic-content', 
-        //     ContentSchema
-        // );
 
         console.log("Init complete")
 
         // Returns the class
         return [
-            this.threadID,
             identityString,
             this.identity
         ];

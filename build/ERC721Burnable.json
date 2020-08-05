@@ -1219,10 +1219,10 @@
   "compiler": {
     "name": "solc",
     "version": "0.6.11+commit.5ef660b1.Emscripten.clang",
-    "optimizer": false,
-    "runs": 200
+    "optimizer": true,
+    "runs": 500
   },
   "networks": {},
   "schemaVersion": "2.3.3",
-  "updatedAt": "2020-08-02T14:11:53.280Z"
+  "updatedAt": "2020-08-05T09:20:56.096Z"
 }

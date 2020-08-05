@@ -16,8 +16,8 @@ const getTokenAddress = async (_ethers) => {
             return '';
         case 1337: // Local
             return {
-                unique: '0x958bB2307a498A61b0AdEAe3c5f9426270979774',
-                mock: '0xD6cE650b08C60c317c930dEEb6B4F830F289E66c'
+                unique: '0xE456065B0290F6606deb30ec9D49C9c2ecDCde90',
+                mock: '0x8D0671D72fa3345839fdC54F815F19FDDcB6617a'
             };
         default:
             console.error("Invalid network");
@@ -35,7 +35,6 @@ const getContractInstance = async (_address, _ethers, _signer, _abi) => {
 
 const getUserToken = async (_uniqueUserTokenInstance, _userAddress) => {
     let userTokenInfo = await _uniqueUserTokenInstance.getUserTokenInfo(_userAddress);
-
     return({
         userName: userTokenInfo[0],
         threadId: userTokenInfo[1],

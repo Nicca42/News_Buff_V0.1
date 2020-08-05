@@ -199,7 +199,7 @@ export default new Vuex.Store({
         MockTokenABI.abi
       );
       commit(mutations.SET_MOCK_CONTRACT_INSTANCE, mockInstance);
-
+        console.log("0");
       /**
        * Getting the users token. This will get any pre-existing token that the
        * user has, as well as their user name. If then do not have a token,
@@ -209,7 +209,12 @@ export default new Vuex.Store({
         state.tokenInfo.tokenContractInstance,
         state.userAddress
       );
-
+      /**
+       * @notice If the user does not have a token, then they are not registered
+       * in the system. A thread ID is created for them, followed by a token.
+       * They are also loaded with mock DAI tokens in order to play around
+       * on the site.
+       */
       if(!userToken.created) {
         console.log("User has no existing thread ID\nCreating Thread ID...");
         let helper = await bucketHelper.init(
@@ -219,8 +224,8 @@ export default new Vuex.Store({
           state.keyInfo.type
         );
         console.log("> Token created for user");
-        commit(mutations.SET_USER_ID, helper[1]);
-        commit(mutations.SET_USER_LIBP2P_ID, helper[2]);
+        commit(mutations.SET_USER_ID, helper[0]);
+        commit(mutations.SET_USER_LIBP2P_ID, helper[1]);
         console.log("User has no existing token\nCreating token...");
         // A token is created for the user
         let results = await ContractHelper.createUserToken(
@@ -235,10 +240,14 @@ export default new Vuex.Store({
           state.ethers,
           state.mockToken.mockContractInstance,
           state.userAddress,
-          100000000000000000000
+          100
         );
         console.log(txResults)
         console.log("> Successfuly loaded user with mock tokens");
+        /**
+         * @notice If the user does have a token they are already registered in
+         * the system, so their threadID is loaded.
+         */
       } else {
         console.log("User has existing Thread ID\nLoading Thread ID...");
         let helper = await bucketHelper.init(
@@ -248,27 +257,10 @@ export default new Vuex.Store({
           state.keyInfo.type
         );
         console.log("> Thread ID loaded");
-        commit(mutations.SET_USER_ID, helper[1]);
-        commit(mutations.SET_USER_LIBP2P_ID, helper[2]);
-
-        console.log("Loading user with mock tokens...");
-        let txResults = await ContractHelper.mintUserToken(
-          state.ethers,
-          state.mockToken.mockContractInstance,
-          state.userAddress,
-          100
-        );
-        console.log(txResults)
-        console.log("> Successfuly loaded user with mock tokens");
+        commit(mutations.SET_USER_ID, helper[0]);
+        commit(mutations.SET_USER_LIBP2P_ID, helper[1]);
       }
-
       console.log(userToken);
-
-			// Sets up the needed IDs for Textile interactions
-      
-
-      // commit(mutations.SET_USER_ID, helper[0]);
-      
 			
       window.ethereum.enable();
     },
