@@ -5,7 +5,7 @@
         <div class="md-layout-item">
           <md-content style="padding: 20px;">
             <md-card-header>
-              <div class="md-title">Post new content</div>
+              <div><h1>Post new content</h1></div>
             </md-card-header>
 
             <p>

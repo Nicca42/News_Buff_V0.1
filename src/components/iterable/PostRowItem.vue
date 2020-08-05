@@ -18,10 +18,10 @@
           {{ postInformation.tags.toString() }}
         </p>
         <p>{{ postInformation.abstract }}</p>
-        <md-button class="md-raised" @click="showTip = true"
+        <md-button class="md-raised md-primary" @click="showTip = true"
           >Tip Journalist</md-button
         >
-        <md-button class="md-raised md-primary" @click="navigateToPost"
+        <md-button class="md-raised md-accent" @click="navigateToPost"
           >View Post</md-button
         >
       </div>
@@ -45,7 +45,7 @@
 
       <md-dialog-actions>
         <md-button class="md-primary" @click="showTip = false">Close</md-button>
-        <md-button class="md-primary md-raised" @click="donate"
+        <md-button class="md-accent md-primary" @click="donate"
           >Donate</md-button
         >
       </md-dialog-actions>

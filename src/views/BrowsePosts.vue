@@ -6,16 +6,17 @@
           <md-content style="padding: 20px;">
             <md-card-header>
               <div class="md-title">
-                <h1>View all posts on newsbuff🦄</h1>
+                <h1>Posts</h1>
               </div>
             </md-card-header>
-            <md-content style="padding:40px" class="text-center">
-              <h2>
-              TODO something about this
-                All posts on News Buff are free to read, assuming you like adds.
-                Otyherwise, pay us monwey and we weill take away the adds for
-                you becuase we are coolio like dis.
-              </h2>
+            <md-content style="padding:20px" class="text-center">
+              <p>
+                Here you can see all the posts on the platform. Please do note that
+                this is still the POC release and as such we cannot assess the 
+                quaility of content on the platform. This will be coming in the 
+                V2 launch. You can sign up to be notified for V2 through our 
+                quick <a href="https://docs.google.com/forms/d/e/1FAIpQLSeX797wqs6qzLN_To0s8Ib3dGwSrhdtGbs5YhsX6GlZPMHOsg/viewform?usp=sf_link" target="_blank"> user survey form here.</a>
+              </p>
             </md-content>
           </md-content>
 
