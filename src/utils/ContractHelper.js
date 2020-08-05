@@ -15,7 +15,7 @@ const getTokenAddress = async (_ethers) => {
         case 42: // Kovan
             return '';
         case 1337: // Local
-            return '0x958bB2307a498A61b0AdEAe3c5f9426270979774';
+            return '0x79B9142D4Ad457a051Bd42136ad676f647cEF301';
         default:
             console.error("Invalid network");
             return '';
