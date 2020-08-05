@@ -15,8 +15,8 @@ const getTokenAddress = async (_network) => {
             return '';
         case 'Local Test Network': // Local
             return {
-                unique: '0xE456065B0290F6606deb30ec9D49C9c2ecDCde90',
-                mock: '0x8D0671D72fa3345839fdC54F815F19FDDcB6617a'
+                unique: '0x79B9142D4Ad457a051Bd42136ad676f647cEF301',
+                mock: '0x1a5726c1A0f4c89AE3892E544d7D3F385dE11513'
             };
         default:
             console.error("Invalid network");

@@ -39,7 +39,6 @@ export default {
     }
   },
   methods: {
-    ...mapActions(["CREATE_CONTENT", "LOAD_CONTENT", "LOAD_AUTHORS_CONTENT"]),
     interact() {
       console.log("Creating content");
 			let params = {
@@ -48,13 +47,13 @@ export default {
 				author: this.author,
 				content: this.content
 			}
-			this.CREATE_CONTENT(params);
+			// this.CREATE_CONTENT(params);
 		},
     load() {
-      this.LOAD_CONTENT();
+      // this.LOAD_CONTENT();
     },
     search() {
-      this.LOAD_AUTHORS_CONTENT(this.searchAuth);
+      // this.LOAD_AUTHORS_CONTENT(this.searchAuth);
     }
   },
   computed: {

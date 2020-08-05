@@ -6,6 +6,10 @@
           <md-content style="padding: 20px;">
             <md-card-header>
               <div class="md-title">Welcome to News Buff!</div>
+              <div class="md-body">You will need to sign 2 transactions to create your 3Box profile.
+                Once that is complete, please fill in your name and email below. 
+                Clicking create will not generate another transaction.
+              </div>
             </md-card-header>
             <br />
           </md-content>
@@ -178,7 +182,12 @@ export default {
       console.log("user button clicked");
       if (this.canCreateUser) {
         console.log("Create User method");
-        let submitBlob = (submitBlob["timestamp"] = new Date());
+        const submitBlob = {
+          timestamp: new Date(),
+          firstName: this.inputForm.firstName,
+          lastName: this.inputForm.lastName,
+          email: this.inputForm.email,
+        };
 
         console.log("user create blob", submitBlob);
         this.CREATE_USER(submitBlob);

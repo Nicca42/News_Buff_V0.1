@@ -1,5 +1,6 @@
 <template>
   <md-app id="app" md-mode="reveal" style="min-height: 100vh;">
+  {{ monitorState }}
     <md-app-toolbar class="md-primary">
       <md-button class="md-icon-button" @click="menuVisible = !menuVisible">
         <md-icon>menu</md-icon>
