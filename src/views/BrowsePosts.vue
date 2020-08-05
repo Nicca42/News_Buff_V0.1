@@ -44,10 +44,10 @@ export default {
   components: { PostRowItem },
   data: () => ({}),
   methods: {
-    ...mapActions(["GET_ALL_POSTS"]),
+    ...mapActions(["LOAD_ALL_POSTS"]),
   },
   mounted() {
-    this.GET_ALL_POSTS();
+    this.LOAD_ALL_POSTS();
   },
   computed: {
     ...mapState(["posts"]),

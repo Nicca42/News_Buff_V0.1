@@ -212,6 +212,7 @@ export default {
     },
   },
   computed: {
+    ...mapState(["posts"]),
     canCreateUser() {
       if (
         this.inputForm.firstName != "" &&

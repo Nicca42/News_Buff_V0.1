@@ -73,11 +73,11 @@ export default {
     },
   },
   methods: {
-    ...mapActions(["MAKE_TIP"]),
+    ...mapActions(["CREATE_TIP"]),
 
     donate() {
       console.log("making tip");
-      this.MAKE_TIP({
+      this.CREATE_TIP({
         postId: this.postInformation.postId,
         value: this.offer,
         address: this.postInformation.contentAuthorAddress,

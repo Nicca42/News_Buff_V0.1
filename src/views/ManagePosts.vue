@@ -51,13 +51,13 @@ export default {
   components: { PostRowItem },
   data: () => ({ userPost: false }),
   methods: {
-    ...mapActions(["GET_ALL_AUTHOR_POSTS"]),
+    ...mapActions(["LOAD_AUTHORS_CONTENT"]),
     authorCreate() {
       router.push({ path: "/ListPost" });
     }
   },
   mounted() {
-    this.userPost = this.GET_ALL_AUTHOR_POSTS();
+    this.userPost = this.LOAD_AUTHORS_CONTENT();
     console.log(this.userPost);
     // this.postId = this.$route.params.id;
   },

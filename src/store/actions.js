@@ -11,11 +11,10 @@ export const GET_USER_TOKEN = "GET_USER_TOKEN";
 
 export const CREATE_USER = "CREATE_USER";
 export const CREATE_POST = "CREATE_POST";
-export const GET_ALL_AUTHOR_POSTS = "GET_ALL_AUTHOR_POSTS";
-export const MAKE_TIP = "MAKE_TIP";
+export const CREATE_TIP = "CREATE_TIP";
 export const SET_USER_NAME = "SET_USER_NAME";
-export const GET_ALL_POSTS = "GET_ALL_POSTS";
 // loads
 export const LOAD_AUTHORS_CONTENT = "LOAD_AUTHORS_CONTENT";
 export const LOAD_USER_NAMES_FROM_BOX = "LOAD_USER_NAMES_FROM_BOX";
 export const LOAD_EXAMPLE_POSTS = "LOAD_EXAMPLE_POSTS";
+export const LOAD_ALL_POSTS = "LOAD_ALL_POSTS";

@@ -236,10 +236,18 @@ export default new Vuex.Store({
     // },
   },
   actions: {
+    // SET UP
+
+    /**
+     * @notice Sets up the ethers instance
+     */
     [actions.SET_ETHERS]: function({ commit }, ethers) {
       commit(mutations.SET_ETHERS, ethers);
     },
-    [actions.SET_UP]: async function({ commit, dispatch, state }) {
+    /**
+     * @notice Sets up the entire app state
+     */
+    [actions.SET_UP]: async function({ dispatch, state }) {
       try {
         // Setting up Onboard.js
         await dispatch(actions.SET_UP_ONBOARD);
@@ -429,6 +437,9 @@ export default new Vuex.Store({
 
       console.log("> Successfully set up Smart Contract instances");
     },
+
+    // CREATE
+
     /**
      * @notice If the user does not have a token, then they are not registered
      * in the system. A thread ID is created for them, followed by a token.
@@ -468,35 +479,6 @@ export default new Vuex.Store({
       console.log("> Successfuly loaded user with mock tokens");
     },
     /**
-     * @notice If the user has a token, then the token is loaded.
-     */
-    [actions.LOAD_USER_THREAD]: async function({ commit, state }) {
-      console.log("User has existing Thread ID\nLoading Thread ID...");
-
-      let helper = await bucketHelper.init(
-        state.userTokenInfo.threadId ? state.userTokenInfo.threadId : "",
-        state.keyInfo.key,
-        state.keyInfo.secret,
-        state.keyInfo.type
-      );
-      commit(mutations.SET_USER_ID, helper[0]);
-      commit(mutations.SET_USER_LIBP2P_ID, helper[1]);
-
-      console.log("> Thread ID loaded");
-    },
-    /**
-     * @notice Getting the users token. This will get any pre-existing token
-     * that the user has, as well as their user name.
-     */
-    [actions.GET_USER_TOKEN]: async function({ commit, state }) {
-      let userToken = await ContractHelper.getUserToken(
-        state.tokenInfo.tokenContractInstance,
-        state.userAddress
-      );
-
-      commit(mutations.SET_USER_UNIQUE_TOKEN, userToken);
-    },
-    /**
      * @notice Stores a users profile in their 3Box account
      */
     [actions.CREATE_USER]: async function({ dispatch, state }, params) {
@@ -509,23 +491,6 @@ export default new Vuex.Store({
       };
 
       dispatch(actions.SET_USER_NAME, userName);
-    },
-    /**
-     * @notice Sets the user names as passed in against the state.
-     */
-    [actions.SET_USER_NAME]: function({ commit }, params) {
-      commit(mutations.SET_USER_FIRST_NAME, params.firstName);
-      commit(mutations.SET_USER_LAST_NAME, params.lastName);
-    },
-    /**
-     * @notice Gets the user name from their 3 Box account and then saves it
-     */
-    [actions.LOAD_USER_NAMES_FROM_BOX]: async function({ dispatch, state }) {
-      const profileAfter = await state.box.public.all();
-      console.log(profileAfter.profileObject);
-      let userInfoFromBox = JSON.parse(profileAfter.profileObject);
-
-      dispatch(actions.SET_USER_NAME, userInfoFromBox);
     },
     /**
      * @notice Allows a user to create a post
@@ -553,7 +518,7 @@ export default new Vuex.Store({
     /**
      * @notice This allows a user to tip an author
      */
-    [actions.MAKE_TIP]: async function({ state }, params) {
+    [actions.CREATE_TIP]: async function({ state }, params) {
       console.log("Tipping creator...");
       await ContractHelper.tipCreator(
         state.ethers,
@@ -562,11 +527,83 @@ export default new Vuex.Store({
         params.value
       );
     },
+
+    // GETS & SETS
+
+    /**
+     * @notice Getting the users token. This will get any pre-existing token
+     * that the user has, as well as their user name.
+     */
+    [actions.GET_USER_TOKEN]: async function({ commit, state }) {
+      let userToken = await ContractHelper.getUserToken(
+        state.tokenInfo.tokenContractInstance,
+        state.userAddress
+      );
+
+      commit(mutations.SET_USER_UNIQUE_TOKEN, userToken);
+    },
+    /**
+     * @notice Sets the user names as passed in against the state.
+     */
+    [actions.SET_USER_NAME]: function({ commit }, params) {
+      commit(mutations.SET_USER_FIRST_NAME, params.firstName);
+      commit(mutations.SET_USER_LAST_NAME, params.lastName);
+    },
+
+    // LOADING ACTIONS
+
+    /**
+     * @notice Pulls all the posts from the ThreadDB and adds any posts that the
+     * state does not currently have.
+     */
+    [actions.LOAD_ALL_POSTS]: async function({ commit, state }) {
+      // Gets all the posts from the ThreadDB
+      let posts = await bucketHelper.loadContent();
+      console.log(posts);
+      // Checks if any of these posts are not in the store and adds them
+      posts.instancesList.forEach(function(post) {
+        // Checking if the array is empty
+        if (state.posts.length > 0) {
+          // Checks if the post is not in the existing posts array
+          let result = state.posts.findIndex(function(element) {
+            return element.id == post._id;
+          });
+          // If the post is unique it formats and adds it
+          if (result == -1) {
+            let formatPost = {
+              id: post._id,
+              title: post.contentTitle,
+              authorName: "Blank for now",
+              publisher: post.contentAuthor,
+              abstract: post.contentDescription,
+              body: post.contentBody,
+              image: null,
+              tags: [],
+            };
+            // Adds each unique post to the state
+            commit(mutations.ADD_POST, formatPost);
+          }
+        } else {
+          let formatPost = {
+            id: post._id,
+            title: post.contentTitle,
+            authorName: "Blank for now",
+            publisher: post.contentAuthor,
+            abstract: post.contentDescription,
+            body: post.contentBody,
+            image: null,
+            tags: [],
+          };
+          // Adds each unique post to the state
+          commit(mutations.ADD_POST, formatPost);
+        }
+      });
+    },
     /**
      * @notice Pulls all the authors posts from the ThreadDB and adds any posts
      * that the state does not have.
      */
-    [actions.GET_ALL_AUTHOR_POSTS]: async function({ commit, state }) {
+    [actions.LOAD_AUTHORS_CONTENT]: async function({ commit, state }) {
       let addingPost = false;
 
       try {
@@ -617,51 +654,31 @@ export default new Vuex.Store({
       return addingPost;
     },
     /**
-     * @notice Pulls all the posts from the ThreadDB and adds any posts that the
-     * state does not currently have.
+     * @notice If the user has a token, then the token is loaded.
      */
-    [actions.GET_ALL_POSTS]: async function({ commit, state }) {
-      // Gets all the posts from the ThreadDB
-      let posts = await bucketHelper.loadContent();
-      console.log(posts);
-      // Checks if any of these posts are not in the store and adds them
-      posts.instancesList.forEach(function(post) {
-        // Checking if the array is empty
-        if (state.posts.length > 0) {
-          // Checks if the post is not in the existing posts array
-          let result = state.posts.findIndex(function(element) {
-            return element.id == post._id;
-          });
-          // If the post is unique it formats and adds it
-          if (result == -1) {
-            let formatPost = {
-              id: post._id,
-              title: post.contentTitle,
-              authorName: "Blank for now",
-              publisher: post.contentAuthor,
-              abstract: post.contentDescription,
-              body: post.contentBody,
-              image: null,
-              tags: [],
-            };
-            // Adds each unique post to the state
-            commit(mutations.ADD_POST, formatPost);
-          }
-        } else {
-          let formatPost = {
-            id: post._id,
-            title: post.contentTitle,
-            authorName: "Blank for now",
-            publisher: post.contentAuthor,
-            abstract: post.contentDescription,
-            body: post.contentBody,
-            image: null,
-            tags: [],
-          };
-          // Adds each unique post to the state
-          commit(mutations.ADD_POST, formatPost);
-        }
-      });
+    [actions.LOAD_USER_THREAD]: async function({ commit, state }) {
+      console.log("User has existing Thread ID\nLoading Thread ID...");
+
+      let helper = await bucketHelper.init(
+        state.userTokenInfo.threadId ? state.userTokenInfo.threadId : "",
+        state.keyInfo.key,
+        state.keyInfo.secret,
+        state.keyInfo.type
+      );
+      commit(mutations.SET_USER_ID, helper[0]);
+      commit(mutations.SET_USER_LIBP2P_ID, helper[1]);
+
+      console.log("> Thread ID loaded");
+    },
+    /**
+     * @notice Gets the user name from their 3 Box account and then saves it
+     */
+    [actions.LOAD_USER_NAMES_FROM_BOX]: async function({ dispatch, state }) {
+      const profileAfter = await state.box.public.all();
+      console.log(profileAfter.profileObject);
+      let userInfoFromBox = JSON.parse(profileAfter.profileObject);
+
+      dispatch(actions.SET_USER_NAME, userInfoFromBox);
     },
     /**
      * @notice Pulls in the example posts and adds them to the store
