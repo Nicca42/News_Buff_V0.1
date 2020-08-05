@@ -11,6 +11,7 @@
             </md-card-header>
             <md-content style="padding:40px" class="text-center">
               <h2>
+              TODO something about this
                 All posts on News Buff are free to read, assuming you like adds.
                 Otyherwise, pay us monwey and we weill take away the adds for
                 you becuase we are coolio like dis.

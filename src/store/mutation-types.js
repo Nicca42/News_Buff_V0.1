@@ -9,8 +9,21 @@ export const SET_CURRENT_NETWORK = "SET_CURRENT_NETWORK";
 export const SET_ETHERS = "SET_ETHERS";
 export const SET_PROVIDER = "SET_PROVIDER";
 export const SET_DAI_ADDRESS = "SET_DAI_ADDRESS";
-// Contracts
-export const SET_LIME_FACTORY = "SET_LIME_FACTORY";
+// Notify
+export const SET_NOTIFIER = "SET_NOTIFIER";
+export const SET_ONBOARD = "SET_ONBOARD";
+export const SET_WALLET = "SET_WALLET";
+// 3Box
+export const SET_BOX = "SET_BOX";
+export const SET_USER_PROFILE = "SET_USER_PROFILE";
+export const SET_USER_NEEDS_ACCOUNT = "SET_USER_NEEDS_ACCOUNT";
 // User info
 export const SET_USER_DAI_BALANCE = "SET_USER_DAI_BALANCE";
 export const SET_USER_TOKEN_BALANCE = "SET_USER_TOKEN_BALANCE";
+export const ADD_AUTHOR_POST = "ADD_AUTHOR_POST";
+export const ADD_POST = "ADD_POST";
+// Blockchain contract things
+export const SET_CONTRACT_INSTANCE = "SET_CONTRACT_INSTANCE";
+export const SET_CONTRACT_ADDRESS = "SET_CONTRACT_ADDRESS";
+export const SET_MOCK_CONTRACT_INSTANCE = "SET_MOCK_CONTRACT_INSTANCE";
+export const SET_MOCK_CONTRACT_ADDRESS = "SET_MOCK_CONTRACT_ADDRESS";

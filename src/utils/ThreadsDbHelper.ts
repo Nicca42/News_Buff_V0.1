@@ -7,6 +7,7 @@ import { fromEvent } from 'rxjs';
 interface ContentInstance {
     _id: string,
     contentAuthor: string,
+    contentAuthorAddress: string,
     contentTitle: string,
     contentDescription: string,
     contentBody: string
@@ -37,6 +38,10 @@ let ContentSchema: JSONSchema = {
             type: "string",
             description: "The author of the content"
         },
+        contentAuthorAddress: {
+            type: "string",
+            description: "The Ethereum address of the author"
+        },
         contentTitle: {
             type: "string",
             description: "The title for the content"
@@ -54,6 +59,7 @@ let ContentSchema: JSONSchema = {
 
 class ThreadsDbHelper {
     public threadID: ThreadID;
+    public threadIdString: string;
     private client: Client;
     private clientToken: string;
     private clientAuth: UserAuth;
@@ -63,8 +69,9 @@ class ThreadsDbHelper {
     private idIdentity?: Identity;
     private collection?: Collection<ContentInstance>;
 
-    constructor() {        
+    constructor(threadId:string) {        
         this.threadID = ThreadID.fromRandom();
+        this.threadIdString = this.threadID.toString();
     }
 
     init = async (id:string, keyKey:string, keySecret: string, keyType: number): Promise<Array<any>> => {
@@ -105,8 +112,8 @@ class ThreadsDbHelper {
             this.identity = restored;
             identityString = this.identity.toString();
             this.idIdentity = restored;
-            // If the ID does not exist, it creates a new ID
         } catch (e) {
+            // If the ID does not exist, it creates a new ID
             try {
                 // Generates a random ID
                 const genIdentity = await Libp2pCryptoIdentity.fromRandom();
@@ -123,9 +130,7 @@ class ThreadsDbHelper {
             this.identity
         );
         this.clientToken = clientToken;
-
         await this.client.newDB(this.threadID);
-
         await this.client.newCollection(
             this.threadID, 
             'basic-content', 
@@ -136,7 +141,6 @@ class ThreadsDbHelper {
 
         // Returns the class
         return [
-            this.threadID,
             identityString,
             this.identity
         ];
@@ -159,6 +163,7 @@ class ThreadsDbHelper {
     createContent = async (
             _id: string,
             contentAuthor: string,
+            contentAuthorAddress: string,
             contentTitle: string,
             contentDescription: string,
             contentBody: string
@@ -173,30 +178,34 @@ class ThreadsDbHelper {
             this.identity
         );
 
-        console.log(">>>HERE 1");
         let content:ContentInstance = {
             _id,
             contentAuthor,
+            contentAuthorAddress,
             contentTitle,
             contentDescription,
             contentBody
         };
-
-        console.log(">>>HERE 2");
 
         const ids = await this.client.create(
             this.threadID, 
             'basic-content', 
             [content]
         );
-
-        console.log("inserting")
-      }
+        console.log("> Successfully added post");
+    }
 
     loadContent = async (): Promise<any> => {
         if (!this.identity) {
             throw new Error('Identity not found')
         }
+
+        // resetting expiring key (i think)
+        this.client = await Client.withKeyInfo(this.keyInfo);
+        // setting a new token
+        let clientToken = await this.client.getToken(
+            this.identity
+        );
 
         let content = await this.client.find(
             this.threadID, 
@@ -209,10 +218,38 @@ class ThreadsDbHelper {
 
     loadAuthorsContent = async (author:string): Promise<any> => {
         if (!this.identity) {
-            throw new Error('Identity not found')
+            throw new Error('Identity not defined')
         }
-
+        // resetting expiring key (i think)
+        this.client = await Client.withKeyInfo(this.keyInfo);
+        // setting a new token
+        let clientToken = await this.client.getToken(
+            this.identity
+        );
+        
         let query = new Where('contentAuthor').eq(author);
+
+        let content = await this.client.find(
+            this.threadID, 
+            'basic-content', 
+            query
+        );
+
+        return content;
+    }
+
+    loadContentById = async (id:number): Promise<any> => {
+        if (!this.identity) {
+            throw new Error('Identity not defined')
+        }
+        // resetting expiring key (i think)
+        this.client = await Client.withKeyInfo(this.keyInfo);
+        // setting a new token
+        let clientToken = await this.client.getToken(
+            this.identity
+        );
+        
+        let query = new Where('_id').eq(id);
 
         let content = await this.client.find(
             this.threadID, 
