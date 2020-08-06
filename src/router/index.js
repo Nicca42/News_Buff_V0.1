@@ -75,14 +75,6 @@ const router = new Router({
       },
     },
     {
-      path: "/ContactUs",
-      name: "News Buff - Contact Us",
-      component: ContactUs,
-      meta: {
-        accountNeeded: false,
-      },
-    },
-    {
       path: "/post/:id",
       name: "News Buff - Post",
       component: ViewPost,
