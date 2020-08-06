@@ -13,7 +13,43 @@
               style="padding-top:20px; padding-left:25px;"
             >
               <img :src="postInformation.image" />
+              </br>
+              <div
+                style="padding-top:20px;"
+              >
+                <md-button 
+                  class="md-raised md-accent" 
+                  @click="showTip = true"
+                >
+                  Tip Journalist
+                </md-button>
+              </div>
+              <md-dialog :md-active.sync="showTip">
+                <md-tabs md-dynamic-height>
+                  <md-tab md-label="Make tip">
+                    <p>Thank you for supporting the open news community.</p>
+                    <p>
+                      Your funding will support this reporter,
+                      {{ postInformation.authorName }}.
+                    </p>
+                    <p>Please specify the tip amount below.</p>
+                  </md-tab>
+                </md-tabs>
+
+                <md-field style="padding-left:20px">
+                  <label style="padding-left:20px">tip amount (USD)</label>
+                  <md-input style="padding:20px" v-model="offer" type="number"></md-input>
+                </md-field>
+
+                <md-dialog-actions>
+                  <md-button class="md-primary" @click="showTip = false">Close</md-button>
+                  <md-button class="md-accent md-primary" @click="donate"
+                    >Donate</md-button
+                  >
+                </md-dialog-actions>
+              </md-dialog>
             </div>
+            
             <div 
               class="md-layout-item"
               style="padding-right:20px; padding-left:25px;"
@@ -30,6 +66,7 @@
                 <b>tags:</b>
                 {{ postInformation.tags.toString() }}
               </p>
+              
               <p
                  class="box-text"
                 style="padding-right:20px; padding-left:25px;"
@@ -104,7 +141,7 @@ import { mapActions, mapState } from "vuex";
 
 export default {
   name: "manageProfile",
-  data: () => ({ postId: null }),
+  data: () => ({ showTip: false, postId: null, offer: 0 }),
   computed: {
     ...mapState(["userProfile", "posts"]),
     postInformation() {
@@ -115,7 +152,17 @@ export default {
     },
   },
   methods: {
-    // ...mapActions(["GET_POST"]),
+    ...mapActions(["CREATE_TIP"]),
+
+    donate() {
+      console.log("making tip");
+      this.CREATE_TIP({
+        postId: this.postInformation.postId,
+        value: this.offer,
+        address: this.postInformation.contentAuthorAddress,
+      });
+      this.showTip = false;
+    },
   },
   mounted() {
     this.postId = this.$route.params.id;

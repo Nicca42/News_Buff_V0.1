@@ -27,10 +27,10 @@
         >
           {{ postInformation.abstract }}
         </p>
-        <md-button class="md-raised md-primary" @click="showTip = true"
+        <md-button class="md-raised md-accent" @click="showTip = true"
           >Tip Journalist</md-button
         >
-        <md-button class="md-raised md-accent" @click="navigateToPost"
+        <md-button class="md-raised md-primary" @click="navigateToPost"
           >View Post</md-button
         >
       </div>
