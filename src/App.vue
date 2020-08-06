@@ -111,19 +111,20 @@
       <div v-if="userAddress">
         <!-- <mining-transaction /> -->
         <router-view />
-        <div style="padding-top:20px;padding-left:20px; padding-right:20px">
-          <span class="md-subheading" style="float: left;">
-            <a href="/TermsOfService">Terms Of Service</a>
-          </span>
+        <div class="phone-viewport">
+        <md-bottom-bar
+          style="padding-left:600px; padding-right:250px"
+        >
           <span>
             Censorship resistant news made with ❤️ by
             <a href="https://github.com/Nicca42/News_Buff_V0.1" target="_blank">News Buff</a>
             📰
           </span>
+        </md-bottom-bar>
         </div>
       </div>
       <div
-        style="padding-top:20px;padding-left:20px; padding-right:20px"
+        style="padding-top:20px; padding-left:20px; padding-right:20px"
         v-if="!userAddress"
       > 
         <h1>
@@ -132,7 +133,7 @@
         <div
           class="md-layout-item"
           v-if="!userAddress"
-          style="padding-top:20px;padding-left:20px; padding-right:20px"
+          style="padding-top:20px; padding-left:20px; padding-right:20px"
         >
           <md-button class="md-raised md-accent" @click="connectWallet"
             >🦊Connect</md-button
@@ -230,6 +231,12 @@ body {
 
 #app {
   font-family: "Space Mono", sans-serif;
+}
+
+.phone-viewport {
+  overflow: hidden;
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 nav li:hover,

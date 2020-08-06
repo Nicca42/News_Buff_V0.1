@@ -82,10 +82,10 @@ export default new Vuex.Store({
         contentAuthorAddress: "0xd4Fa489Eacc52BA59438993f37Be9fcC20090E39",
         publisher: "News Buff weekly",
         abstract:
-          "The U.N termed Yeman 'the world’s worst humanitarian crisis' before the pandemic hit. 80% of the population requires humanitarian aid. The U.N was unable to fundraise the required amounts, and as a result the vunrabile population have now been put on half rations. 20% of Yemans districts are without a medical doctor. This situation has only been made worse by the drop of funding provided by the UAE.",
+          "The U.N termed Yeman 'the world’s worst humanitarian crisis' before the pandemic hit. 80% of the population requires humanitarian aid. The U.N was unable to fund raise the required amounts, and as a result the vulnerable population have now been put on half rations. 20% of Yemans districts are without a medical doctor. This situation has only been made worse by the drop of funding provided by the UAE.",
         body:
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum",
-        image: "https://www.dw.com/image/47689419_101.jpg",
+          "<h1>The worst Crisis of our generation</h1><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum",
+        image: "https://masspeaceaction.org/home/wp-content/uploads/2020/06/Sanaa_COVID_responder.png",
         tags: ["Moderated (x6)", "Verified sources", "Verified sources"],
       },
     ],
@@ -230,12 +230,7 @@ export default new Vuex.Store({
       state.wallet = wallet;
       console.log("wallet set to: ");
       console.log(state.wallet);
-    },
-    // [mutations.SET_NOTIFIER](state, notifier) {
-    //   state.notifier = notifier;
-    //   console.log("notifier set to: ");
-    //   console.log(state.notifier);
-    // },
+    }
   },
   actions: {
     // SET UP
@@ -506,7 +501,8 @@ export default new Vuex.Store({
         state.userAddress,
         params.title,
         params.description,
-        params.body
+        params.body,
+        params.imageData
       );
       console.log("Adding post to token...");
 
@@ -580,7 +576,7 @@ export default new Vuex.Store({
               publisher: post.contentAuthor,
               abstract: post.contentDescription,
               body: post.contentBody,
-              image: null,
+              image: post.img,
               tags: [],
             };
             // Adds each unique post to the state
@@ -594,7 +590,7 @@ export default new Vuex.Store({
             publisher: post.contentAuthor,
             abstract: post.contentDescription,
             body: post.contentBody,
-            image: null,
+            image: post.img,
             tags: [],
           };
           // Adds each unique post to the state
@@ -628,7 +624,7 @@ export default new Vuex.Store({
                 publisher: post.contentAuthor,
                 abstract: post.contentDescription,
                 body: post.contentBody,
-                image: null,
+                image: post.img,
                 tags: [],
               };
               addingPost = true;
@@ -643,7 +639,7 @@ export default new Vuex.Store({
               publisher: post.contentAuthor,
               abstract: post.contentDescription,
               body: post.contentBody,
-              image: null,
+              image:  post.img,
               tags: [],
             };
             addingPost = true;

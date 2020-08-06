@@ -1,11 +1,19 @@
 <template>
   <md-card style="padding:30px">
     <div class="md-layout">
-      <div class="md-layout-item md-size-20">
+      <div 
+        class="md-layout-item md-size-20"
+        style="padding-top:20px; padding-left:25px;"
+      >
         <img :src="postInformation.image" />
       </div>
       <div class="md-layout-item">
-        <h2>{{ postInformation.title }}</h2>
+        <h2
+          style="padding-left:50px; padding-right:25px;"
+          class="box-text"
+        >
+          {{ postInformation.title }}
+        </h2>
         <p>
           <b>Published by: </b>
           <b>
@@ -13,11 +21,12 @@
           >, {{ postInformation.publisher }}.
         </p>
 
-        <p>
-          <b>tags:</b>
-          {{ postInformation.tags.toString() }}
+        <p
+          style="padding-left:50px; padding-right:25px;"
+          class="box-text"
+        >
+          {{ postInformation.abstract }}
         </p>
-        <p>{{ postInformation.abstract }}</p>
         <md-button class="md-raised md-primary" @click="showTip = true"
           >Tip Journalist</md-button
         >
@@ -53,6 +62,46 @@
   </md-card>
 </template>
 
+<style lang="scss" scoped>
+  .card-expansion {
+    height: 480px;
+  }
+  .md-card {
+    width: 1000px;
+    margin: 4px;
+    display: inline-block;
+    vertical-align: top;
+  }
+
+  .box-text {
+    text-align: justify;
+    text-justify: inter-word;
+  }
+
+
+  // Link styling
+  .a:link {
+    color: #af0404;
+    text-decoration: none;
+  }
+
+  /* visited link */
+  .a:visited {
+    color: #FC6161;
+    text-decoration: underline;
+  }
+
+  /* mouse over link */
+  .a:hover {
+    color: #FC6161;
+  }
+
+  /* selected link */
+  .a:active {
+    color: #FC6161;
+    text-decoration: underline;
+  }
+</style>
 <script>
 import { mapActions, mapState } from "vuex";
 import router from "../../router";
