@@ -23,6 +23,13 @@
                 >
                 user survey form.
                 </a>
+                For more information check the
+                <a
+                  class="a" 
+                  href="/"
+                > 
+                  Home page.
+                </a>
               </p>
             </md-content>
           </md-content>

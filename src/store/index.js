@@ -64,9 +64,9 @@ export default new Vuex.Store({
         id: 0,
         title:
           "Black Lives Matter Protests create real change despite drop in coverage",
-        authorName: "Nicolas Cage",
-        contentAuthorAddress: "0xd4Fa489Eacc52BA59438993f37Be9fcC20090E39",
-        publisher: "Cage the Times",
+        authorName: "Nicole Hemsway",
+        contentAuthorAddress: "0xD9995BAE12FEe327256FFec1e3184d492bD94C31",
+        publisher: "Independent Investigators",
         abstract:
           "Weeks of protests that where met with the same police brutality they where protesting have started seeing the fruits of their efforts. A bill was introduced to hold police accountable for their actions, Minneapolis pledges to disband their police department, and all of this desplite main stream news outlets dropping coverage of the protests after the few inceidence of looting stopped, and thus made coverage harder to sensationalise.",
         body:
