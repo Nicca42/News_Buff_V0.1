@@ -576,7 +576,7 @@ export default new Vuex.Store({
               publisher: post.contentAuthor,
               abstract: post.contentDescription,
               body: post.contentBody,
-              image: post.img,
+              image: post.contentImg,
               tags: [],
             };
             // Adds each unique post to the state
