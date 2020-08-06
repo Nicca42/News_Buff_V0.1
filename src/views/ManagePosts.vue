@@ -21,9 +21,12 @@
               <p>
                 Head over to the Create New Post page to contribute.
               </p>
-              <md-button class="md-raised md-accent" @click="authorCreate"
-              >Make a post</md-button
-            >
+              <md-button 
+                class="md-raised md-accent" 
+                @click="authorCreate"
+              >
+                Make a post
+              </md-button>
             </md-content>
           </md-content>
           <transition-group name="fadeUp" tag="ul">

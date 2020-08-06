@@ -245,4 +245,5 @@ nav li.router-link-exact-active {
   margin-right: auto;
   text-align: center;
 }
+
 </style>
