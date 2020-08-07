@@ -11,7 +11,8 @@ const defaultConfigs = {
 };
 
 const deploy = async (network, secret) => {
-	var RPC = null;
+	let RPC = null;
+	let deployer = null;
 
 	if(network == 'local') {
 		// Overriding default config for local test net
@@ -21,16 +22,32 @@ const deploy = async (network, secret) => {
 		// Setting the RPC
 		RPC = 'http://localhost:8545/';
 
+		deployer = new etherlime.JSONRPCPrivateKeyDeployer(
+			secret, 
+			RPC, 
+			defaultConfigs
+		);
+
 		console.log("\nDeploying locally...");
+	} else if(network == 'rinkeby') {
+		// Overriding default config for rinkeby test net
+		defaultConfigs.chainId = 4;
+		// Setting private key for this network
+		secret = process.env.DEPLOYER_PRIVATE_KEY_RINKEBY;
+		// Setting the RPC
+		RPC = `https:/rinkeby.infura.io/v3/${process.env.INFURA_API_KEY_RINKEBY}`;
+
+		deployer = new etherlime.InfuraPrivateKeyDeployer(
+			secret, 
+			network, 
+			process.env.INFURA_API_KEY_RINKEBY, 
+			defaultConfigs
+		);
+
+		console.log("\nDeploying to rinkeby...");
 	} else {
 		console.error("Network not supported");
 	}
-
-	const deployer = new etherlime.JSONRPCPrivateKeyDeployer(
-		secret, 
-		RPC, 
-		defaultConfigs
-	);
 
 	const deploy = (...args) => deployer.deploy(...args);
 

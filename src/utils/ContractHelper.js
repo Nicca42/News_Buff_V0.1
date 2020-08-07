@@ -10,7 +10,10 @@ const getTokenAddress = async (_network) => {
         case 'Ropsten Ethereum Test Network (Unsupported)': // Ropsten
             return '';
         case 'Rinkeby Ethereum Test Network': // Rinkeby
-            return '';
+            return {
+                unique: '0xeF92eD9f4C89121D1039dE4E4712cA057e18e646',
+                mock: '0x889c0b44320f184030fDF6DE0102C8C7decD17bc'
+            };
         case 'Kovan Ethereum Test Network (Unsupported)': // Kovan
             return '';
         case 'Local Test Network': // Local

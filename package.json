@@ -13,6 +13,7 @@
     "start": "etherlime ganache -q --networkId=1337 --gasLimit=9000000",
     "cbuild": "etherlime compile",
     "deploy:local": "etherlime deploy --network=local --runs=500",
+    "deploy:rinkeby": "etherlime deploy --network=rinkeby --runs=500",
     "test": "etherlime test"
   },
   "dependencies": {
