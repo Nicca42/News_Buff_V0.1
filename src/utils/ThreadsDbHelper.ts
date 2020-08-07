@@ -10,7 +10,8 @@ interface ContentInstance {
     contentAuthorAddress: string,
     contentTitle: string,
     contentDescription: string,
-    contentBody: string
+    contentBody: string,
+    contentImg: string
 }
 
 interface ContentState {
@@ -53,6 +54,9 @@ let ContentSchema: JSONSchema = {
         contentBody: {
             type: "string",
             description: "The body of the content. Either mark down or HTML"
+        },
+        contentImg: {
+            type: "string"
         }
     }
 };
@@ -166,7 +170,8 @@ class ThreadsDbHelper {
             contentAuthorAddress: string,
             contentTitle: string,
             contentDescription: string,
-            contentBody: string
+            contentBody: string,
+            contentImg: string
     ) => {
         if (!this.identity) {
             throw new Error('Identity not defined')
@@ -184,7 +189,8 @@ class ThreadsDbHelper {
             contentAuthorAddress,
             contentTitle,
             contentDescription,
-            contentBody
+            contentBody,
+            contentImg
         };
 
         const ids = await this.client.create(

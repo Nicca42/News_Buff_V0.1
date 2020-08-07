@@ -1,11 +1,11 @@
 <template>
   <md-app id="app" md-mode="reveal" style="min-height: 100vh;">
-  {{ monitorState }}
+    {{ monitorState }}
     <md-app-toolbar class="md-primary">
       <md-button class="md-icon-button" @click="menuVisible = !menuVisible">
         <md-icon>menu</md-icon>
       </md-button>
-      <span class="md-title">{{ $route.name }}</span>
+      <span ><h1>{{ $route.name }}</h1></span>
 
       <!-- <logo style="margin-left:600px"/> -->
 
@@ -44,7 +44,7 @@
         <md-list-item>
           <md-icon>account_box</md-icon>
           <span class="md-list-item-text">
-            <router-link to="/Profile">Profile</router-link>
+            <router-link to="/CreateProfile">Profile</router-link>
           </span>
         </md-list-item>
 
@@ -92,15 +92,6 @@
             >
           </span>
         </md-list-item>
-
-        <md-divider></md-divider>
-
-        <md-list-item>
-          <md-icon>chat</md-icon>
-          <span class="md-list-item-text">
-            <router-link to="/ContactUs">Contact</router-link>
-          </span>
-        </md-list-item>
         <md-divider></md-divider>
       </md-list>
     </md-app-drawer>
@@ -108,17 +99,37 @@
     <md-app-content
       style="background-color: #F5F9F9; padding-left:0px; padding-right:0px"
     >
-      <!-- <mining-transaction /> -->
-      <router-view />
-      <div style="padding-top:20px;padding-left:20px; padding-right:20px">
-        <span class="md-subheading" style="float: left;">
-          <a href="/TermsOfService">Terms Of Service</a>
-        </span>
-        <span>
-          Censorship resistant news made with ❤️ by
-          <a href="https://github.com/Nicca42/News_Buff_V0.1">News Buff</a>
-          📰
-        </span>
+      <div v-if="userAddress">
+        <!-- <mining-transaction /> -->
+        <router-view />
+        <div class="phone-viewport">
+        <md-bottom-bar
+          style="padding-left:600px; padding-right:250px"
+        >
+          <span>
+            Censorship resistant news made with ❤️ by
+            <a href="https://github.com/Nicca42/News_Buff_V0.1" target="_blank">News Buff</a>
+            📰
+          </span>
+        </md-bottom-bar>
+        </div>
+      </div>
+      <div
+        style="padding-top:20px; padding-left:20px; padding-right:20px"
+        v-if="!userAddress"
+      > 
+        <h1>
+          Please connect your wallet
+        </h1>
+        <div
+          class="md-layout-item"
+          v-if="!userAddress"
+          style="padding-top:20px; padding-left:20px; padding-right:20px"
+        >
+          <md-button class="md-raised md-accent" @click="connectWallet"
+            >🦊Connect</md-button
+          >
+        </div>
       </div>
     </md-app-content>
   </md-app>
@@ -181,20 +192,25 @@ export default {
 <style lang="scss">
 @import url("https://fonts.googleapis.com/css?family=Space+Mono");
 @import url("https://fonts.googleapis.com/css?family=Coiny|Rubik");
+@import url("https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap");
 // @import "/styles/variables.scss";
 @import "~vue-material/dist/theme/engine"; // Import the theme engine
 @include md-register-theme(
   "default",
   (
-    primary: #828ec6,
+    primary: #000023,
     // The primary color of your brand
-      accent: #dd688c
-      // The secondary color of your brand,,,,,,,,,,,,,,,,,,,,,,,,,,,
+      accent: #FC6161
+      // The secondary color of your brand,,,,,,,,,,,,,,,,,,,,,,,,,,,,
   )
 );
 @import "~vue-material/dist/theme/all"; // Apply the theme
 
 html,
+h1 {
+  font-family: 'Permanent Marker', cursive;
+}
+
 body {
   font-family: "Space Mono", sans-serif;
 }
@@ -206,6 +222,12 @@ body {
 
 #app {
   font-family: "Space Mono", sans-serif;
+}
+
+.phone-viewport {
+  overflow: hidden;
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 nav li:hover,
@@ -221,4 +243,5 @@ nav li.router-link-exact-active {
   margin-right: auto;
   text-align: center;
 }
+
 </style>

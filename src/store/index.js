@@ -55,7 +55,7 @@ export default new Vuex.Store({
     loadedContent: null,
     account: null,
     userAddress: null,
-    userProfile: { firstName: null, lastName: null },
+    userProfile: { firstName: null, lastName: null, set: false },
     currentNetwork: null,
     posts: [],
     authorsPosts: [],
@@ -64,9 +64,9 @@ export default new Vuex.Store({
         id: 0,
         title:
           "Black Lives Matter Protests create real change despite drop in coverage",
-        authorName: "Nicolas Cage",
-        contentAuthorAddress: "0xd4Fa489Eacc52BA59438993f37Be9fcC20090E39",
-        publisher: "Cage the Times",
+        authorName: "Nicole Hemsway",
+        contentAuthorAddress: "0xD9995BAE12FEe327256FFec1e3184d492bD94C31",
+        publisher: "Independent Investigators",
         abstract:
           "Weeks of protests that where met with the same police brutality they where protesting have started seeing the fruits of their efforts. A bill was introduced to hold police accountable for their actions, Minneapolis pledges to disband their police department, and all of this desplite main stream news outlets dropping coverage of the protests after the few inceidence of looting stopped, and thus made coverage harder to sensationalise.",
         body:
@@ -82,10 +82,10 @@ export default new Vuex.Store({
         contentAuthorAddress: "0xd4Fa489Eacc52BA59438993f37Be9fcC20090E39",
         publisher: "News Buff weekly",
         abstract:
-          "The U.N termed Yeman 'the world’s worst humanitarian crisis' before the pandemic hit. 80% of the population requires humanitarian aid. The U.N was unable to fundraise the required amounts, and as a result the vunrabile population have now been put on half rations. 20% of Yemans districts are without a medical doctor. This situation has only been made worse by the drop of funding provided by the UAE.",
+          "The U.N termed Yeman 'the world’s worst humanitarian crisis' before the pandemic hit. 80% of the population requires humanitarian aid. The U.N was unable to fund raise the required amounts, and as a result the vulnerable population have now been put on half rations. 20% of Yemans districts are without a medical doctor. This situation has only been made worse by the drop of funding provided by the UAE.",
         body:
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum",
-        image: "https://www.dw.com/image/47689419_101.jpg",
+          "<h1>The worst Crisis of our generation</h1><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. </br></br> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehende do consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehende do consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. </br></br> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehende do consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. </br></br> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehende do consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum",
+        image: "https://masspeaceaction.org/home/wp-content/uploads/2020/06/Sanaa_COVID_responder.png",
         tags: ["Moderated (x6)", "Verified sources", "Verified sources"],
       },
     ],
@@ -188,13 +188,15 @@ export default new Vuex.Store({
      */
     [mutations.SET_USER_FIRST_NAME](state, firstName) {
       state.userProfile.firstName = firstName;
-      console.log("User last name set to: ");
-      console.log(state.userProfile.firstName);
+      console.log("User last name set to: ", state.userProfile.firstName);
     },
     [mutations.SET_USER_LAST_NAME](state, lastName) {
       state.userProfile.lastName = lastName;
-      console.log("User first name set to: ");
-      console.log(state.userProfile.lastName);
+      console.log("User first name set to: ", state.userProfile.lastName);
+    },
+    [mutations.SET_USER_DETAILS_SET](state, set) {
+      state.userProfile.set = set;
+      console.log("User detals set");
     },
     /**
      * @notice The following mutations are for 3Box and oboard
@@ -228,18 +230,21 @@ export default new Vuex.Store({
       state.wallet = wallet;
       console.log("wallet set to: ");
       console.log(state.wallet);
-    },
-    // [mutations.SET_NOTIFIER](state, notifier) {
-    //   state.notifier = notifier;
-    //   console.log("notifier set to: ");
-    //   console.log(state.notifier);
-    // },
+    }
   },
   actions: {
+    // SET UP
+
+    /**
+     * @notice Sets up the ethers instance
+     */
     [actions.SET_ETHERS]: function({ commit }, ethers) {
       commit(mutations.SET_ETHERS, ethers);
     },
-    [actions.SET_UP]: async function({ commit, dispatch, state }) {
+    /**
+     * @notice Sets up the entire app state
+     */
+    [actions.SET_UP]: async function({ dispatch, state }) {
       try {
         // Setting up Onboard.js
         await dispatch(actions.SET_UP_ONBOARD);
@@ -429,6 +434,9 @@ export default new Vuex.Store({
 
       console.log("> Successfully set up Smart Contract instances");
     },
+
+    // CREATE
+
     /**
      * @notice If the user does not have a token, then they are not registered
      * in the system. A thread ID is created for them, followed by a token.
@@ -468,35 +476,6 @@ export default new Vuex.Store({
       console.log("> Successfuly loaded user with mock tokens");
     },
     /**
-     * @notice If the user has a token, then the token is loaded.
-     */
-    [actions.LOAD_USER_THREAD]: async function({ commit, state }) {
-      console.log("User has existing Thread ID\nLoading Thread ID...");
-
-      let helper = await bucketHelper.init(
-        state.userTokenInfo.threadId ? state.userTokenInfo.threadId : "",
-        state.keyInfo.key,
-        state.keyInfo.secret,
-        state.keyInfo.type
-      );
-      commit(mutations.SET_USER_ID, helper[0]);
-      commit(mutations.SET_USER_LIBP2P_ID, helper[1]);
-
-      console.log("> Thread ID loaded");
-    },
-    /**
-     * @notice Getting the users token. This will get any pre-existing token
-     * that the user has, as well as their user name.
-     */
-    [actions.GET_USER_TOKEN]: async function({ commit, state }) {
-      let userToken = await ContractHelper.getUserToken(
-        state.tokenInfo.tokenContractInstance,
-        state.userAddress
-      );
-
-      commit(mutations.SET_USER_UNIQUE_TOKEN, userToken);
-    },
-    /**
      * @notice Stores a users profile in their 3Box account
      */
     [actions.CREATE_USER]: async function({ dispatch, state }, params) {
@@ -511,23 +490,6 @@ export default new Vuex.Store({
       dispatch(actions.SET_USER_NAME, userName);
     },
     /**
-     * @notice Sets the user names as passed in against the state.
-     */
-    [actions.SET_USER_NAME]: function({ commit }, params) {
-      commit(mutations.SET_USER_FIRST_NAME, params.firstName);
-      commit(mutations.SET_USER_LAST_NAME, params.lastName);
-    },
-    /**
-     * @notice Gets the user name from their 3 Box account and then saves it
-     */
-    [actions.LOAD_USER_NAMES_FROM_BOX]: async function({ dispatch, state }) {
-      const profileAfter = await state.box.public.all();
-      console.log(profileAfter.profileObject);
-      let userInfoFromBox = JSON.parse(profileAfter.profileObject);
-
-      dispatch(actions.SET_USER_NAME, userInfoFromBox);
-    },
-    /**
      * @notice Allows a user to create a post
      */
     [actions.CREATE_POST]: async function({ state }, params) {
@@ -539,7 +501,8 @@ export default new Vuex.Store({
         state.userAddress,
         params.title,
         params.description,
-        params.body
+        params.body,
+        params.imageData
       );
       console.log("Adding post to token...");
 
@@ -553,7 +516,7 @@ export default new Vuex.Store({
     /**
      * @notice This allows a user to tip an author
      */
-    [actions.MAKE_TIP]: async function({ state }, params) {
+    [actions.CREATE_TIP]: async function({ state }, params) {
       console.log("Tipping creator...");
       await ContractHelper.tipCreator(
         state.ethers,
@@ -562,56 +525,37 @@ export default new Vuex.Store({
         params.value
       );
     },
+
+    // GETS & SETS
+
     /**
-     * @notice Pulls all the authors posts from the ThreadDB and adds any posts
-     * that the state does not have.
+     * @notice Getting the users token. This will get any pre-existing token
+     * that the user has, as well as their user name.
      */
-    [actions.GET_ALL_AUTHOR_POSTS]: async function({ commit, state }) {
-      // Gets all the authors posts from the ThreadDB
-      let posts = await bucketHelper.loadAuthorsContent(state.userAddress);
-      // Checks if any of these posts are not in the store and adds them
-      posts.instancesList.forEach(function(post) {
-        if (state.authorsPosts.length > 0) {
-          // Checks if the post is not in the existing posts array
-          let result = state.authorsPosts.findIndex(function(element) {
-            return element.id == post._id;
-          });
-          // If the post is unique it formats and adds it
-          if (result == -1) {
-            let formatPost = {
-              id: post._id,
-              title: post.contentTitle,
-              authorName: "Blank for now",
-              publisher: post.contentAuthor,
-              abstract: post.contentDescription,
-              body: post.contentBody,
-              image: null,
-              tags: [],
-            };
-            // Adds each unique post to the state
-            commit(mutations.ADD_AUTHOR_POST, formatPost);
-          }
-        } else {
-          let formatPost = {
-            id: post._id,
-            title: post.contentTitle,
-            authorName: "Blank for now",
-            publisher: post.contentAuthor,
-            abstract: post.contentDescription,
-            body: post.contentBody,
-            image: null,
-            tags: [],
-          };
-          // Adds each unique post to the state
-          commit(mutations.ADD_AUTHOR_POST, formatPost);
-        }
-      });
+    [actions.GET_USER_TOKEN]: async function({ commit, state }) {
+      let userToken = await ContractHelper.getUserToken(
+        state.tokenInfo.tokenContractInstance,
+        state.userAddress
+      );
+
+      commit(mutations.SET_USER_UNIQUE_TOKEN, userToken);
     },
+    /**
+     * @notice Sets the user names as passed in against the state.
+     */
+    [actions.SET_USER_NAME]: function({ commit }, params) {
+      commit(mutations.SET_USER_FIRST_NAME, params.firstName);
+      commit(mutations.SET_USER_LAST_NAME, params.lastName);
+      commit(mutations.SET_USER_DETAILS_SET, true);
+    },
+
+    // LOADING ACTIONS
+
     /**
      * @notice Pulls all the posts from the ThreadDB and adds any posts that the
      * state does not currently have.
      */
-    [actions.GET_ALL_POSTS]: async function({ commit, state }) {
+    [actions.LOAD_ALL_POSTS]: async function({ commit, state }) {
       // Gets all the posts from the ThreadDB
       let posts = await bucketHelper.loadContent();
       console.log(posts);
@@ -632,7 +576,7 @@ export default new Vuex.Store({
               publisher: post.contentAuthor,
               abstract: post.contentDescription,
               body: post.contentBody,
-              image: null,
+              image: post.contentImg,
               tags: [],
             };
             // Adds each unique post to the state
@@ -646,13 +590,94 @@ export default new Vuex.Store({
             publisher: post.contentAuthor,
             abstract: post.contentDescription,
             body: post.contentBody,
-            image: null,
+            image: post.img,
             tags: [],
           };
           // Adds each unique post to the state
           commit(mutations.ADD_POST, formatPost);
         }
       });
+    },
+    /**
+     * @notice Pulls all the authors posts from the ThreadDB and adds any posts
+     * that the state does not have.
+     */
+    [actions.LOAD_AUTHORS_CONTENT]: async function({ commit, state }) {
+      let addingPost = false;
+
+      try {
+        // Gets all the authors posts from the ThreadDB
+        let posts = await bucketHelper.loadAuthorsContent(state.userAddress);
+        // Checks if any of these posts are not in the store and adds them
+        posts.instancesList.forEach(function(post) {
+          if (state.authorsPosts.length > 0) {
+            // Checks if the post is not in the existing posts array
+            let result = state.authorsPosts.findIndex(function(element) {
+              return element.id == post._id;
+            });
+            // If the post is unique it formats and adds it
+            if (result == -1) {
+              let formatPost = {
+                id: post._id,
+                title: post.contentTitle,
+                authorName: "Blank for now",
+                publisher: post.contentAuthor,
+                abstract: post.contentDescription,
+                body: post.contentBody,
+                image: post.img,
+                tags: [],
+              };
+              addingPost = true;
+              // Adds each unique post to the state
+              commit(mutations.ADD_AUTHOR_POST, formatPost);
+            }
+          } else {
+            let formatPost = {
+              id: post._id,
+              title: post.contentTitle,
+              authorName: "Blank for now",
+              publisher: post.contentAuthor,
+              abstract: post.contentDescription,
+              body: post.contentBody,
+              image:  post.img,
+              tags: [],
+            };
+            addingPost = true;
+            // Adds each unique post to the state
+            commit(mutations.ADD_AUTHOR_POST, formatPost);
+          }
+        });
+      } catch (error) {
+        throw new Error("Failed to load authors content", error);
+      }
+      return addingPost;
+    },
+    /**
+     * @notice If the user has a token, then the token is loaded.
+     */
+    [actions.LOAD_USER_THREAD]: async function({ commit, state }) {
+      console.log("User has existing Thread ID\nLoading Thread ID...");
+
+      let helper = await bucketHelper.init(
+        state.userTokenInfo.threadId ? state.userTokenInfo.threadId : "",
+        state.keyInfo.key,
+        state.keyInfo.secret,
+        state.keyInfo.type
+      );
+      commit(mutations.SET_USER_ID, helper[0]);
+      commit(mutations.SET_USER_LIBP2P_ID, helper[1]);
+
+      console.log("> Thread ID loaded");
+    },
+    /**
+     * @notice Gets the user name from their 3 Box account and then saves it
+     */
+    [actions.LOAD_USER_NAMES_FROM_BOX]: async function({ dispatch, state }) {
+      const profileAfter = await state.box.public.all();
+      console.log(profileAfter.profileObject);
+      let userInfoFromBox = JSON.parse(profileAfter.profileObject);
+
+      dispatch(actions.SET_USER_NAME, userInfoFromBox);
     },
     /**
      * @notice Pulls in the example posts and adds them to the store
